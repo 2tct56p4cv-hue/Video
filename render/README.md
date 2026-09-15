@@ -19,7 +19,6 @@ often — see "Possible upgrade" below.
 | --- | --- |
 | Source artwork | The Capco storyboard image the user attached — cropped into its 8 numbered panels and used as the actual on-screen visuals (Ken Burns pan/zoom), not redrawn |
 | Panel crop-boundary detection | Python + Pillow/NumPy, sampling pixel colors along scan-lines to find the real card edges (see "Cropping the storyboard" below) instead of a naive even grid split |
-| Name removal on slide 1 | Tesseract OCR (word boxes) + OpenCV `inpaint` / flat fills |
 | Panel upscaling/sharpening | ffmpeg `scale` (lanczos) + `unsharp` filter, since the source panels are ~400×520px and need to fill a 1920×1080 frame |
 | Voice-over | [Piper](https://github.com/rhasspy/piper) — offline neural TTS; a different narrator per capability (ryan, amy, alan, southern_english_female, lessac, kathleen, danny — US/UK, male/female), intro and closing share the host voice; mapping in `gen_narration.py` |
 | Background music | Procedurally generated with NumPy: 112 BPM electronic bed (16th-note synth arpeggio, soft kick, hats, sub bass, low-passed pad), mixed at -14 dB and side-chain ducked under the narration with ffmpeg `sidechaincompress` — no royalty-free-music API was reachable from this environment |
@@ -46,14 +45,6 @@ In the video every slide fills the full frame width (no borders or blurred
 backdrop); the camera holds on the top of the slide, pans slowly down to the
 bottom and holds, so the whole slide is seen at full size. Overlays (tagline
 chip, bug gag, scene-8 labels) are lower-thirds over the picture.
-
-Slide 1 is not from the storyboard: it is the separate "Our Team — People,
-Roles and Tools" illustration (`our_team_clean.png`), with the illustration's
-fictional names removed. Names were located with Tesseract OCR; on the
-whiteboard each column's tool list was shifted up into the name badge's place
-and the column given a common, shorter bottom (its own rounded top corners
-flipped), so no blank block remains; the names under each person were
-inpainted (OpenCV Telea). Role labels and tools were kept.
 
 ## Pipeline
 

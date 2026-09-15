@@ -224,7 +224,7 @@
     if (im) { var setPan = function(){ var hgt = im.getBoundingClientRect().height; wrapEl.style.setProperty('--pan', (-Math.max(0, hgt - 1080)) + 'px'); };
       if (im.complete) setPan(); else im.addEventListener('load', setPan); }
     setTimeout(function(){ el.classList.add('active');
-      document.getElementById('brand').style.opacity = (s.id === 's1') ? '0' : '0.9'; }, ms(s.start));
+      document.getElementById('brand').style.opacity = '0.9'; }, ms(s.start));
     var prev = TIMELINE.scenes[i - 1];
     if (prev) {
       var prevEl = document.getElementById(prev.id);
