@@ -57,7 +57,7 @@
     filter:blur(30px) brightness(0.42) saturate(1.15);
   }
   .panel-wrap .card{
-    position:absolute; top:30px; left:50%; height:940px;
+    position:absolute; top:24px; left:50%; height:960px;
     transform:translateX(-50%);
     border-radius:18px; overflow:hidden;
     box-shadow:0 40px 90px -30px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.12);
@@ -94,17 +94,18 @@
   .kicker.show{ animation:taglineIn 0.7s ease forwards; }
 
   /* Ken Burns per-scene: each scene gets its own keyframes so start/end framing is intentional */
-  @keyframes kb-in { from{ transform:translateX(-50%) scale(0.955);} to{ transform:translateX(-50%) scale(1.0);} }
-  @keyframes kb-out{ from{ transform:translateX(-50%) scale(1.0);}   to{ transform:translateX(-50%) scale(0.955);} }
-  .panel-wrap.s1 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 45%; }
-  .panel-wrap.s2 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 55%; }
-  .panel-wrap.s3 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
-  .panel-wrap.s4 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 45%; }
-  .panel-wrap.s5 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
-  .panel-wrap.s6 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
-  .panel-wrap.s7 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
-  .panel-wrap.s8 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 40%; }
-  .panel-wrap.s9 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 60%; }
+  /* hold the full slide, then push in on the scene's focal area, then hold */
+  @keyframes kb-push{ 0%{ transform:translateX(-50%) scale(1);} 32%{ transform:translateX(-50%) scale(1);} 82%{ transform:translateX(-50%) scale(1.55);} 100%{ transform:translateX(-50%) scale(1.55);} }
+  .panel-wrap .card{ animation:kb-push var(--dur,20s) cubic-bezier(.45,0,.2,1) forwards; }
+  .panel-wrap.s1 .card{ transform-origin:50% 58%; }
+  .panel-wrap.s2 .card{ transform-origin:58% 55%; }
+  .panel-wrap.s3 .card{ transform-origin:50% 48%; }
+  .panel-wrap.s4 .card{ transform-origin:60% 42%; }
+  .panel-wrap.s5 .card{ transform-origin:42% 48%; }
+  .panel-wrap.s6 .card{ transform-origin:58% 40%; }
+  .panel-wrap.s7 .card{ transform-origin:50% 55%; }
+  .panel-wrap.s8 .card{ transform-origin:50% 55%; }
+  .panel-wrap.s9 .card{ transform-origin:50% 68%; }
 
   /* ---- scene 4 bug gag overlay (kept, layered on top of the real art) ---- */
   #s4 .buggag{ position:absolute; bottom:28px; left:60px; right:60px; height:60px; z-index:30; }
@@ -132,7 +133,8 @@
     background:rgba(6,14,30,0.72); border:1px solid rgba(255,255,255,0.22);
     opacity:0;
   }
-  #s8.active .connectlabel{ animation:taglineIn .6s ease forwards; }
+  #s8.active .connectlabel{ animation:taglineIn .6s ease forwards, labelOut 1s 8.5s ease forwards; }
+  @keyframes labelOut{ to{ opacity:0; transform:translateY(-8px);} }
   #s8 .cl1{ top:300px; left:110px; animation-delay:.6s !important; }
   #s8 .cl2{ top:300px; right:110px; animation-delay:1.3s !important; }
   #s8 .cl3{ top:560px; right:130px; animation-delay:2.0s !important; }
