@@ -13,25 +13,50 @@ frame-by-frame renderer. A Remotion rewrite (frame-accurate, faster,
 easier to re-edit per shot) is the natural next step if this gets reused
 often — see "Possible upgrade" below.
 
+## Tools used
+
+| Purpose | Tool |
+| --- | --- |
+| Source artwork | The Capco storyboard image the user attached — cropped into its 8 numbered panels and used as the actual on-screen visuals (Ken Burns pan/zoom), not redrawn |
+| Panel crop-boundary detection | Python + Pillow/NumPy, sampling pixel colors along scan-lines to find the real card edges (see "Cropping the storyboard" below) instead of a naive even grid split |
+| Panel upscaling/sharpening | ffmpeg `scale` (lanczos) + `unsharp` filter, since the source panels are ~400×520px and need to fill a 1920×1080 frame |
+| Voice-over | [Piper](https://github.com/rhasspy/piper) — offline neural TTS, `en_US-lessac-medium` voice |
+| Background music | Procedurally generated with NumPy (sine/triangle pads + a soft pluck pulse) — no royalty-free-music API was reachable from this environment |
+| Animation / motion graphics | Hand-written HTML/CSS/JS (Ken Burns keyframes, crossfades, the scene-8 capability-network overlay, the scene-4 bug sight-gag) |
+| Rendering the animation to video | [Playwright](https://playwright.dev/) driving headless Chromium, using `recordVideo` to capture the page in real time |
+| Audio mixing & final encode | ffmpeg — mixes narration + music, re-encodes the recorded `.webm` to H.264/AAC `.mp4` |
+
+## Cropping the storyboard
+
+The storyboard is one flat 1672×940 image: a header banner, then an 8-panel
+grid (4 columns × 2 rows) with connector arrows between cards. An even
+`width/4 × height/2` split cuts through those arrows and — because the rows
+aren't exactly half the image height — bleeds the bottom of row 1's cards
+into the top of row 2's crops. The real boundaries were found by sampling
+pixel colors along horizontal/vertical scan-lines to locate the navy
+gaps between cards (see the boundary-detection snippet used to produce
+`panels_v2/`); the resulting per-panel crop rectangles are asymmetric
+(column widths 400/370/403/400px, row split at y=524 not y=470) but contain
+each full card with no neighbor bleed.
+
 ## Pipeline
 
-1. **`gen_narration.py`** — synthesizes the voice-over with
-   [Piper](https://github.com/rhasspy/piper) (offline neural TTS,
-   `en_US-lessac-medium` voice), one clip per scene, and writes
-   `timeline.json` with exact per-scene start/voStart/voEnd/end timings
-   (narration duration + hand-tuned lead-in/hold padding for pacing).
-2. **`gen_music.py`** — procedurally generates a subtle corporate pad/pluck
-   background track with numpy (no royalty-free-music API available here).
+1. **`gen_narration.py`** — synthesizes the voice-over with Piper, one clip
+   per scene, and writes `timeline.json` with exact per-scene
+   start/voStart/voEnd/end timings (narration duration + hand-tuned
+   lead-in/hold padding for pacing).
+2. **`gen_music.py`** — procedurally generates the background track.
 3. **`build_narration_track.sh`** — delays and mixes the 9 per-scene voice
    clips into one `narration.wav` using the offsets from `timeline.json`.
-4. **`scene.html`** — the actual animation: a single 1920×1080 HTML/CSS/JS
-   page with one absolutely-positioned `<div class="scene">` per beat,
-   crossfaded and internally animated (data pipelines, code typing, a
-   pass-rate ring, a bridge with traveling packets, a network graph, etc.)
-   driven by `setTimeout`s scheduled from the injected `timeline.json`.
-5. **`record.js`** — a Playwright script that loads `scene.html` in headless
-   Chromium and records it in real time via `recordVideo` (produces a silent
-   `.webm`).
+4. **`scene.html`** — the animation: a 1920×1080 page with one
+   absolutely-positioned `<div class="scene">` per beat. Each scene's
+   background is the real storyboard panel (`panels/panelN.png`) animated
+   with a per-scene Ken Burns `@keyframes` pan/zoom; scenes crossfade and a
+   few small overlays (tagline chip, bug gag, capability-network labels)
+   sit on top. Driven by `setTimeout`s scheduled from the injected
+   `timeline.json`.
+5. **`record.js`** — Playwright loads `scene.html` in headless Chromium and
+   records it in real time via `recordVideo` (produces a silent `.webm`).
 6. **`assemble_final.sh`** — mixes narration (full volume) with music
    (ducked ~-9dB) into `final_audio.wav`, then re-encodes the `.webm` to
    H.264/AAC `.mp4` with ffmpeg, muxing in that audio track.
@@ -40,7 +65,7 @@ often — see "Possible upgrade" below.
 
 Requires: `piper-tts` (pip), a Piper voice model (`.onnx` + `.onnx.json`,
 not committed here — ~60MB, fetched from the Piper GitHub releases), numpy,
-Playwright + a Chromium build, and ffmpeg with libx264/aac.
+Pillow, Playwright + a Chromium build, and ffmpeg with libx264/aac.
 
 ```bash
 python3 gen_narration.py        # -> timeline.json, audio/*_raw.wav
