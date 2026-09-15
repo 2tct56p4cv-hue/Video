@@ -1,0 +1,566 @@
+<title>One Technology Team</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --navy-950:#081327;
+    --navy-900:#0B1E3D;
+    --navy-800:#12305C;
+    --navy-700:#1B4278;
+    --blue-500:#2E6FE0;
+    --teal-400:#22C2AE;
+    --teal-300:#5FE0CC;
+    --amber-400:#E8A33D;
+    --ink:#0B1E3D;
+    --paper:#F4F7FB;
+    --paper-2:#E7EDF6;
+    --line:#D4DEEC;
+    --muted:#5A6D8C;
+    --white:#FFFFFF;
+    --shadow: 0 20px 50px -20px rgba(11,30,61,0.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#EAF0FB;
+      --paper:#081327;
+      --paper-2:#0E1F3D;
+      --line:#20355E;
+      --muted:#93A7CC;
+      --white:#0F2444;
+      --shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#EAF0FB;
+    --paper:#081327;
+    --paper-2:#0E1F3D;
+    --line:#20355E;
+    --muted:#93A7CC;
+    --white:#0F2444;
+    --shadow: 0 20px 50px -20px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    padding-inline:0;
+  }
+  h1,h2,h3{
+    font-family:"Sora", ui-sans-serif, system-ui, sans-serif;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{ font-family:"JetBrains Mono", ui-monospace, monospace; }
+
+  /* ---------- Header / scrubber ---------- */
+  header.top{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:50;
+    background:var(--navy-900);
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .top-inner{
+    max-width:1080px;
+    margin:0 auto;
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    line-height:1.1;
+    flex:0 0 auto;
+  }
+  .brand .capco{
+    font-family:"Sora";
+    font-weight:800;
+    font-size:15px;
+    letter-spacing:0.08em;
+  }
+  .brand .sub{
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    color:var(--teal-300);
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+  .scrubber{
+    flex:1 1 auto;
+    display:flex;
+    gap:3px;
+    align-items:center;
+    overflow-x:auto;
+    padding-block:2px;
+    scrollbar-width:none;
+  }
+  .scrubber::-webkit-scrollbar{display:none;}
+  .scrub-seg{
+    height:6px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.16);
+    flex:1 1 auto;
+    min-width:18px;
+    position:relative;
+    transition:background .2s ease;
+    cursor:pointer;
+  }
+  .scrub-seg.active{ background:var(--teal-400); }
+  .runtime{
+    flex:0 0 auto;
+    font-size:11px;
+    color:var(--muted-dark,#9FB1D6);
+    white-space:nowrap;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    max-width:1080px;
+    margin:0 auto;
+    padding:56px 24px 40px;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--teal-400);
+    font-weight:600;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:20px;height:1px;
+    background:var(--teal-400);
+  }
+  .hero h1{
+    font-size:clamp(28px,4.4vw,44px);
+    font-weight:700;
+    color:var(--ink);
+    max-width:16ch;
+  }
+  .hero p.lede{
+    max-width:56ch;
+    color:var(--muted);
+    font-size:15.5px;
+    line-height:1.6;
+    margin-top:14px;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:22px;
+  }
+  .pill{
+    font-size:11.5px;
+    padding:6px 12px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    color:var(--muted);
+    background:var(--white);
+    font-family:"JetBrains Mono";
+  }
+
+  /* ---------- Scene sections ---------- */
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px 100px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .scene{
+    scroll-margin-top:90px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  .scene-frame{
+    position:relative;
+    background:linear-gradient(160deg, var(--navy-900), var(--navy-800) 55%, var(--navy-700));
+    color:#fff;
+    padding:26px 26px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-height:190px;
+  }
+  .scene-frame::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(420px 220px at 88% -10%, rgba(34,194,174,0.28), transparent 60%),
+      radial-gradient(320px 200px at 6% 120%, rgba(46,111,224,0.28), transparent 60%);
+    pointer-events:none;
+  }
+  .scene-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    position:relative;
+    z-index:1;
+  }
+  .scene-num{
+    font-family:"JetBrains Mono";
+    font-size:12px;
+    color:var(--teal-300);
+    letter-spacing:0.08em;
+  }
+  .scene-title{
+    font-size:clamp(19px,2.6vw,24px);
+    font-weight:700;
+    margin-top:4px;
+    max-width:26ch;
+  }
+  .scene-time{
+    font-family:"JetBrains Mono";
+    font-size:12px;
+    color:#C9D6F0;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    padding:5px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .visual-note{
+    position:relative; z-index:1;
+    font-size:13.5px;
+    line-height:1.65;
+    color:#DCE6F8;
+    max-width:64ch;
+  }
+  .onscreen-chip{
+    position:relative; z-index:1;
+    align-self:flex-start;
+    font-family:"JetBrains Mono";
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:0.04em;
+    color:var(--navy-900);
+    background:var(--teal-300);
+    padding:7px 12px;
+    border-radius:8px;
+    margin-top:2px;
+  }
+  .humor{
+    position:relative; z-index:1;
+    font-size:12.5px;
+    color:var(--amber-400);
+    border-left:2px solid var(--amber-400);
+    padding-left:10px;
+    max-width:56ch;
+  }
+
+  .scene-body{
+    padding:20px 26px 24px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  .vo-block{
+    display:flex;
+    gap:12px;
+  }
+  .vo-mark{
+    font-family:"Sora";
+    font-size:26px;
+    color:var(--teal-400);
+    line-height:1;
+    flex:0 0 auto;
+  }
+  .vo-text{
+    font-size:15px;
+    line-height:1.65;
+    color:var(--ink);
+    font-style:italic;
+    max-width:60ch;
+  }
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .tag{
+    font-family:"JetBrains Mono";
+    font-size:11px;
+    color:var(--navy-800);
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:4px 9px;
+    border-radius:6px;
+  }
+  :root[data-theme="dark"] .tag, @media (prefers-color-scheme:dark){ .tag{color:var(--ink);} }
+
+  .transition-note{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    color:var(--muted);
+    padding:12px 26px;
+    border-top:1px dashed var(--line);
+  }
+  .transition-note svg{ flex:0 0 auto; opacity:0.7; }
+
+  /* ---------- Closing card ---------- */
+  .closing{
+    background:radial-gradient(700px 340px at 50% -20%, rgba(34,194,174,0.35), transparent 60%), var(--navy-950);
+    color:#fff;
+    border-radius:18px;
+    padding:52px 28px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    box-shadow:var(--shadow);
+  }
+  .closing .lines{
+    font-family:"Sora";
+    font-weight:700;
+    font-size:clamp(20px,3.4vw,30px);
+    line-height:1.3;
+  }
+  .closing .tagline{
+    margin-top:10px;
+    font-family:"JetBrains Mono";
+    font-size:12.5px;
+    letter-spacing:0.1em;
+    color:var(--teal-300);
+    text-transform:uppercase;
+  }
+  .closing .capco-word{
+    margin-top:18px;
+    font-family:"Sora";
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:0.1em;
+  }
+
+  footer.foot{
+    max-width:1080px;
+    margin:0 auto;
+    padding:28px 24px 60px;
+    color:var(--muted);
+    font-size:12px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  @media (max-width:640px){
+    .scene-top{ flex-direction:column; }
+    .brand .sub{ display:none; }
+  }
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="capco">CAPCO</span>
+      <span class="sub">Technology Team Film</span>
+    </div>
+    <div class="scrubber" id="scrubber"></div>
+    <div class="runtime mono" id="runtime">0:00 / 4:20</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Animatic &middot; Storyboard Preview</div>
+  <h1>One Technology Team, One Continuous Story</h1>
+  <p class="lede">
+    A scene-by-scene animatic for the internal Capco Technology Team film — nine connected
+    beats, each carrying its visual direction, full voice-over, and on-screen text, built from
+    the attached storyboard. Scroll to watch the story unfold, or jump with the scrubber above.
+  </p>
+  <div class="hero-meta">
+    <span class="pill">16:9 &middot; 1920×1080</span>
+    <span class="pill">~4:20 runtime</span>
+    <span class="pill">English VO</span>
+    <span class="pill">9 scenes, match-cut transitions</span>
+  </div>
+</section>
+
+<main id="scenes"></main>
+
+<footer class="foot">
+  <span>Capco &middot; People + Technology + Better Outcomes</span>
+  <span>Full script: /script/CAPCO_Technology_Team_Video_Script.md</span>
+</footer>
+
+<script>
+(function(){
+  try{
+    var scenes = [
+      {
+        n:"01", t:"0:00–0:25", title:"One Technology Team",
+        visual:"Modern financial-services office. We cut between four specialists working in isolation — an analyst at a dashboard, a developer coding, a QA tester running a suite, a cloud engineer at an infrastructure console. Camera glides between them. Thin glowing lines extend from each screen and begin connecting the workspaces into one network.",
+        vo:"Behind every successful technology transformation, there is much more than technology. There are people who understand the data, build the solutions, test their quality, modernize the platforms, and make sure everything works when it matters most. That is where our Technology Team comes in.",
+        chip:"PEOPLE + TECHNOLOGY + BETTER OUTCOMES",
+        tags:["Diverse cast","Modern office","Network reveal"],
+        transition:"A connecting data-line rushes to camera, dissolving into streaming particles → opens Scene 2."
+      },
+      {
+        n:"02", t:"0:25–0:55", title:"Data &amp; Analytics",
+        visual:"Streams labeled Banking, Customer, Regulatory and External Data pour in, tangled and fragmented. A data engineer combs them into orderly pipelines. Tool marks pass through in sequence: Python → SQL → BigQuery → GCP → Airflow → dbt. Pipeline empties into a dashboard that builds itself live.",
+        vo:"Our Data Engineers and Analytics specialists turn complex information into something businesses can actually use. We build reliable data pipelines, improve data quality, and transform large volumes of financial data into trusted insights. From SQL and Python to BigQuery, GCP and Airflow, we help move data from complexity to business value.",
+        chip:"CLEAN → TRANSFORM → ANALYZE → INSIGHT",
+        tags:["Python","SQL","BigQuery","GCP","Airflow","dbt"],
+        transition:"A glowing data point arcs off the dashboard, landing as a blinking code cursor → opens Scene 3."
+      },
+      {
+        n:"03", t:"0:55–1:25", title:"Software Engineering &amp; Cloud",
+        visual:"The cursor finishes a line of code; pull back to a developer's workstation, code compiling live. A legacy monolith block fractures and reassembles into connected microservices. AWS / Azure / GCP marks glow above a rotating cloud icon.",
+        vo:"Our engineers build the technology behind those insights. We develop applications, integrations, and cloud-native solutions designed for modern financial institutions. Whether we are working with Java, Python, microservices, or cloud platforms such as AWS, Azure, and Google Cloud, the objective is the same: solutions that are scalable, secure, and resilient.",
+        chip:"BUILD. CONNECT. SCALE.",
+        tags:["Java","Python","Apache Camel","AWS","Azure","GCP"],
+        transition:"A green build-success check flies forward, morphing into a QA checklist icon → opens Scene 4."
+      },
+      {
+        n:"04", t:"1:25–1:55", title:"Testing &amp; Quality",
+        visual:"Automated tests fire rapidly down a checklist — Test Planning, Test Execution, Defect Management, Quality Reporting. A pass-rate ring climbs toward 98% as a defect counter falls.",
+        vo:"But building something is only part of the journey. Our Testing and Quality specialists make sure solutions actually work — reliably, securely, and at scale. From test strategy and automation to performance testing and QA leadership, we identify problems before they become business problems.",
+        chip:"HIGHER QUALITY. GREATER CONFIDENCE.",
+        tags:["Tosca","NeoLoad","LoadRunner"],
+        humor:"Humor beat — a red bug icon creeps toward a “Production” door, gets flagged by an automated scanner, and scurries off. Silent sight-gag, no dialogue.",
+        transition:"The completed pass-rate ring spins into an infinity-loop shape → opens Scene 5."
+      },
+      {
+        n:"05", t:"1:55–2:25", title:"DevOps &amp; Platform Modernization",
+        visual:"A commit travels automatically through an animated loop: BUILD → TEST → DEPLOY → MONITOR, each stage lighting up. Container and Helm-chart icons snap into place; an ArgoCD-style sync arrow spins. A cluttered legacy server rack dissolves into a clean cloud-native platform.",
+        vo:"Our DevOps and platform specialists connect development with delivery. We automate pipelines, implement GitOps processes, and help organizations modernize legacy technology. The result is faster delivery, more resilient platforms, and less manual complexity.",
+        chip:"AUTOMATE → MODERNIZE → ACCELERATE",
+        tags:["CI/CD","Containers","Helm","ArgoCD / GitOps"],
+        transition:"The modern platform's glow extends into a digital-bank skyline → opens Scene 6."
+      },
+      {
+        n:"06", t:"2:25–2:55", title:"Risk, Compliance &amp; Data Governance",
+        visual:"Inside a digital bank, glowing lines of transaction data flow across the screen. Most flow through calmly; one flashes amber, is isolated and inspected while the rest continue undisturbed.",
+        vo:"In financial services, however, technology also needs trust. Our specialists combine technology expertise with knowledge of AML, transaction monitoring, data governance, data quality, and regulatory requirements. We help ensure that the right data is available, the right controls are in place, and transformation remains compliant.",
+        chip:"RIGHT DATA. RIGHT CONTROLS. GREATER TRUST.",
+        tags:["AML","Transaction Monitoring","Data Governance","Audit"],
+        transition:"A shield icon settles onto a bridge structure extending across the screen → opens Scene 7."
+      },
+      {
+        n:"07", t:"2:55–3:25", title:"Migration &amp; Delivery",
+        visual:"Split composition: an aging on-prem system on the left, a bright modern cloud environment on the right. A glowing bridge forms between them; data and people move across in coordinated waves as milestones light up beneath: PLAN → MIGRATE → VALIDATE → GO LIVE.",
+        vo:"And when organizations need to move from legacy technology to something new, our migration and delivery expertise helps make that change possible. We coordinate complex migrations, cutovers, and transformation activities so that technology, data, and people arrive at the destination together — with minimal disruption to the business.",
+        chip:"FROM LEGACY TO MODERN.",
+        tags:["Plan","Migrate","Validate","Go Live"],
+        transition:"Camera pulls back from the bridge, revealing it as one thread in a larger web of connections → opens Scene 8."
+      },
+      {
+        n:"08", t:"3:25–3:55", title:"The Capabilities Connect",
+        visual:"Wide shot reassembling every specialist and environment from Scenes 2–7 into one diagram. As each capability is named, its icon pulses and a bright line draws to the next, converging at center frame.",
+        vo:"The real strength of the team is not any single technology or role. It is how these capabilities connect. Data Engineering works with Analytics. Developers work with Cloud and DevOps. Testing protects delivery. Governance creates trust. And migration expertise helps bring everything safely into the real world.",
+        chip:"CONNECTED EXPERTISE",
+        tags:["Data","Cloud","DevOps","Testing","Governance","Migration"],
+        transition:"The connected network contracts to a point of light, expanding into the final skyline → opens Final Scene."
+      },
+      {
+        n:"09", t:"3:55–4:20", title:"One Team", final:true,
+        visual:"Camera pulls back to the full cast standing together over a modern financial-district skyline threaded with digital infrastructure. Seven labels rise and converge into one word at the top of frame: IMPACT. Hold, then settle into the closing card.",
+        vo:"We may come from different technical backgrounds, but we share one objective: using technology to solve real problems and create better outcomes for our clients. Different skills. Connected expertise. One Technology Team.",
+        chip:"DATA · ENGINEERING · CLOUD · QUALITY · DEVOPS · GOVERNANCE · MIGRATION → IMPACT",
+        tags:["Full cast","Skyline","Closing card"],
+        transition:null
+      }
+    ];
+
+    var scenesEl = document.getElementById('scenes');
+    var scrubberEl = document.getElementById('scrubber');
+    var runtimeEl = document.getElementById('runtime');
+
+    scenes.forEach(function(s, i){
+      var seg = document.createElement('div');
+      seg.className = 'scrub-seg';
+      seg.dataset.index = i;
+      seg.title = s.title + ' (' + s.t + ')';
+      seg.addEventListener('click', function(){
+        var target = document.getElementById('scene-' + i);
+        if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      scrubberEl.appendChild(seg);
+
+      var art = document.createElement('article');
+      art.className = 'scene';
+      art.id = 'scene-' + i;
+
+      var humorHtml = s.humor ? '<div class="humor">' + s.humor + '</div>' : '';
+      var tagsHtml = s.tags.map(function(tg){ return '<span class="tag">' + tg + '</span>'; }).join('');
+      var transitionHtml = s.transition ? (
+        '<div class="transition-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' + s.transition + '</div>'
+      ) : '';
+
+      art.innerHTML =
+        '<div class="scene-frame">' +
+          '<div class="scene-top">' +
+            '<div>' +
+              '<div class="scene-num">SCENE ' + s.n + (s.final ? ' &middot; FINAL' : '') + '</div>' +
+              '<div class="scene-title">' + s.title + '</div>' +
+            '</div>' +
+            '<div class="scene-time mono">' + s.t + '</div>' +
+          '</div>' +
+          '<div class="visual-note">' + s.visual + '</div>' +
+          humorHtml +
+          '<div class="onscreen-chip">' + s.chip + '</div>' +
+        '</div>' +
+        '<div class="scene-body">' +
+          '<div class="vo-block"><span class="vo-mark">&ldquo;</span><p class="vo-text">' + s.vo + '</p></div>' +
+          '<div class="tags">' + tagsHtml + '</div>' +
+        '</div>' +
+        transitionHtml;
+
+      scenesEl.appendChild(art);
+    });
+
+    var closing = document.createElement('div');
+    closing.className = 'closing';
+    closing.innerHTML =
+      '<div class="lines">ONE TEAM.<br>CONNECTED DELIVERY.<br>LASTING IMPACT.</div>' +
+      '<div class="tagline">Ideas &middot; Technology &middot; Lasting Impact</div>' +
+      '<div class="capco-word">CAPCO</div>';
+    scenesEl.appendChild(closing);
+
+    // scroll-linked progress
+    var sceneEls = scenes.map(function(_, i){ return document.getElementById('scene-' + i); });
+    function fmt(sec){
+      var m = Math.floor(sec/60), s = Math.floor(sec%60);
+      return m + ':' + (s<10?'0':'') + s;
+    }
+    var endTimes = [25,55,85,115,145,175,205,235,260];
+    function onScroll(){
+      var mid = window.innerHeight * 0.35;
+      var current = 0;
+      sceneEls.forEach(function(el, i){
+        if(!el) return;
+        var r = el.getBoundingClientRect();
+        if(r.top < mid) current = i;
+      });
+      document.querySelectorAll('.scrub-seg').forEach(function(seg, i){
+        seg.classList.toggle('active', i <= current);
+      });
+      runtimeEl.textContent = fmt(endTimes[current]) + ' / 4:20';
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  }catch(e){
+    console.error(e);
+  }
+})();
+</script>
