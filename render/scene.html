@@ -47,29 +47,29 @@
   .scene.active{ opacity:1; }
 
   .panel-wrap{
-    position:absolute; inset:-70px;
+    position:absolute; inset:0;
     overflow:hidden;
   }
-  .panel-wrap img{
-    position:absolute; inset:0;
-    width:100%; height:100%;
+  .panel-wrap img.bg{
+    position:absolute; inset:-60px;
+    width:calc(100% + 120px); height:calc(100% + 120px);
     object-fit:cover;
+    filter:blur(30px) brightness(0.42) saturate(1.15);
+  }
+  .panel-wrap .card{
+    position:absolute; top:30px; left:50%; height:940px;
+    transform:translateX(-50%);
+    border-radius:18px; overflow:hidden;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.12);
     will-change:transform;
   }
+  .panel-wrap .card img{
+    display:block; height:100%; width:auto;
+  }
 
-  .scrim-top{
-    position:absolute; top:0; left:0; right:0; height:170px; z-index:5;
-    background:linear-gradient(180deg, rgba(6,14,30,0.55), transparent);
-    pointer-events:none;
-  }
-  .scrim-bottom{
-    position:absolute; left:0; right:0; bottom:0; height:230px; z-index:5;
-    background:linear-gradient(0deg, rgba(6,14,30,0.6), transparent);
-    pointer-events:none;
-  }
 
   .tagline-wrap{
-    position:absolute; left:0; right:0; bottom:56px; z-index:40;
+    position:absolute; left:0; right:0; bottom:16px; z-index:40;
     display:flex; justify-content:center;
   }
   .tagline{
@@ -94,28 +94,20 @@
   .kicker.show{ animation:taglineIn 0.7s ease forwards; }
 
   /* Ken Burns per-scene: each scene gets its own keyframes so start/end framing is intentional */
-  @keyframes kb-s1{ from{ transform:scale(1.10) translate(1%, 2%);} to{ transform:scale(1.0) translate(0%, -1%);} }
-  @keyframes kb-s2{ from{ transform:scale(1.12) translate(8%, 3%);} to{ transform:scale(1.02) translate(-4%, -1%);} }
-  @keyframes kb-s3{ from{ transform:scale(1.13) translate(-7%, 1%);} to{ transform:scale(1.02) translate(5%, -2%);} }
-  @keyframes kb-s4{ from{ transform:scale(1.10) translate(-7%, 3%);} to{ transform:scale(1.02) translate(6%, -2%);} }
-  @keyframes kb-s5{ from{ transform:scale(1.14) translate(1%, 5%);} to{ transform:scale(1.02) translate(-3%, -3%);} }
-  @keyframes kb-s6{ from{ transform:scale(1.12) translate(-3%, -4%);} to{ transform:scale(1.02) translate(2%, 4%);} }
-  @keyframes kb-s7{ from{ transform:scale(1.13) translate(2%, -5%);} to{ transform:scale(1.02) translate(-2%, 5%);} }
-  @keyframes kb-s8{ from{ transform:scale(1.20) translate(0%, -12%);} to{ transform:scale(1.10) translate(0%, -8%);} }
-  @keyframes kb-s9{ from{ transform:scale(1.08) translate(0%, -6%);} to{ transform:scale(1.0) translate(0%, 1%);} }
-
-  .panel-wrap.s1 img{ animation:kb-s1 var(--dur,20s) linear forwards; transform-origin:30% 30%; }
-  .panel-wrap.s2 img{ animation:kb-s2 var(--dur,20s) linear forwards; transform-origin:20% 40%; }
-  .panel-wrap.s3 img{ animation:kb-s3 var(--dur,20s) linear forwards; transform-origin:80% 40%; }
-  .panel-wrap.s4 img{ animation:kb-s4 var(--dur,20s) linear forwards; transform-origin:15% 45%; }
-  .panel-wrap.s5 img{ animation:kb-s5 var(--dur,20s) linear forwards; transform-origin:50% 55%; }
-  .panel-wrap.s6 img{ animation:kb-s6 var(--dur,20s) linear forwards; transform-origin:40% 35%; }
-  .panel-wrap.s7 img{ animation:kb-s7 var(--dur,20s) linear forwards; transform-origin:50% 30%; }
-  .panel-wrap.s8 img{ animation:kb-s8 var(--dur,20s) linear forwards; transform-origin:50% 20%; }
-  .panel-wrap.s9 img{ animation:kb-s9 var(--dur,20s) linear forwards; transform-origin:50% 60%; }
+  @keyframes kb-in { from{ transform:translateX(-50%) scale(0.955);} to{ transform:translateX(-50%) scale(1.0);} }
+  @keyframes kb-out{ from{ transform:translateX(-50%) scale(1.0);}   to{ transform:translateX(-50%) scale(0.955);} }
+  .panel-wrap.s1 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 45%; }
+  .panel-wrap.s2 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 55%; }
+  .panel-wrap.s3 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
+  .panel-wrap.s4 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 45%; }
+  .panel-wrap.s5 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
+  .panel-wrap.s6 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
+  .panel-wrap.s7 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 50%; }
+  .panel-wrap.s8 .card{ animation:kb-out var(--dur,20s) ease-in-out forwards; transform-origin:50% 40%; }
+  .panel-wrap.s9 .card{ animation:kb-in  var(--dur,20s) ease-in-out forwards; transform-origin:50% 60%; }
 
   /* ---- scene 4 bug gag overlay (kept, layered on top of the real art) ---- */
-  #s4 .buggag{ position:absolute; bottom:120px; left:60px; right:60px; height:60px; z-index:30; }
+  #s4 .buggag{ position:absolute; bottom:28px; left:60px; right:60px; height:60px; z-index:30; }
   #s4 .track{ position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(255,255,255,0); }
   #s4 .bug{ position:absolute; top:50%; left:0; transform:translateY(-50%); font-size:30px; opacity:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
   #s4.active .bug{ animation:bugWalk 5.5s 5.5s cubic-bezier(.3,0,.2,1) forwards; }
@@ -141,29 +133,29 @@
     opacity:0;
   }
   #s8.active .connectlabel{ animation:taglineIn .6s ease forwards; }
-  #s8 .cl1{ top:330px; left:210px; animation-delay:.6s !important; }
-  #s8 .cl2{ top:330px; left:870px; animation-delay:1.3s !important; }
-  #s8 .cl3{ top:330px; right:210px; animation-delay:2.0s !important; }
-  #s8 .cl4{ top:620px; left:340px; animation-delay:2.7s !important; }
-  #s8 .cl5{ top:620px; right:340px; animation-delay:3.4s !important; }
+  #s8 .cl1{ top:300px; left:110px; animation-delay:.6s !important; }
+  #s8 .cl2{ top:300px; right:110px; animation-delay:1.3s !important; }
+  #s8 .cl3{ top:560px; right:130px; animation-delay:2.0s !important; }
+  #s8 .cl4{ top:560px; left:130px; animation-delay:2.7s !important; }
+  #s8 .cl5{ top:820px; left:110px; animation-delay:3.4s !important; }
   #s8 .center8{
-    position:absolute; left:50%; top:470px; transform:translate(-50%,0) scale(0); z-index:20;
+    position:absolute; right:90px; top:760px; transform:scale(0); z-index:20;
     width:280px; text-align:center; font-size:24px; font-weight:800; padding:20px;
     border-radius:14px; background:linear-gradient(120deg,var(--teal-300),var(--teal-400));
     color:var(--navy-900); box-shadow:0 20px 50px -12px rgba(0,0,0,.6);
   }
   #s8.active .center8{ animation:centerPop .6s 4.2s cubic-bezier(.3,1.5,.4,1) forwards; }
-  @keyframes centerPop{ to{ transform:translate(-50%,0) scale(1); } }
+  @keyframes centerPop{ to{ transform:scale(1); } }
 
-  #s9 .words{ position:absolute; left:0; right:0; top:70px; display:flex; justify-content:center; flex-wrap:wrap; gap:16px; z-index:20; }
+  #s9 .words{ position:absolute; left:0; right:0; top:1000px; display:flex; justify-content:center; flex-wrap:wrap; gap:16px; z-index:20; }
   #s9 .word9{ font-size:15px; font-weight:800; letter-spacing:.1em; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.6); opacity:0; transform:translateY(-16px); }
   #s9.active .word9{ animation:wordRise 1.1s cubic-bezier(.2,.8,.2,1) forwards; }
   #s9 .word9:nth-child(1){animation-delay:1.3s;} #s9 .word9:nth-child(2){animation-delay:1.5s;} #s9 .word9:nth-child(3){animation-delay:1.7s;}
   #s9 .word9:nth-child(4){animation-delay:1.9s;} #s9 .word9:nth-child(5){animation-delay:2.1s;} #s9 .word9:nth-child(6){animation-delay:2.3s;} #s9 .word9:nth-child(7){animation-delay:2.5s;}
   @keyframes wordRise{ 60%{opacity:1; transform:translateY(6px) scale(1.05);} 100%{opacity:0; transform:translateY(70px) scale(.8);} }
-  #s9 .impact{ position:absolute; left:0; right:0; top:80px; text-align:center; font-size:0; opacity:0; transform:scale(.7); z-index:20; }
+  #s9 .impact{ position:absolute; left:0; right:0; top:992px; text-align:center; font-size:0; opacity:0; transform:scale(.7); z-index:20; }
   #s9.active .impact{ animation:impactPop .8s 3.4s cubic-bezier(.3,1.4,.4,1) forwards; }
-  @keyframes impactPop{ to{ opacity:1; transform:scale(1); font-size:60px; } }
+  @keyframes impactPop{ to{ opacity:1; transform:scale(1); font-size:52px; } }
   #s9 .impact span{ font-weight:800; letter-spacing:.06em; color:#fff; text-shadow:0 4px 20px rgba(0,0,0,.7); }
 
   #closing{
@@ -183,51 +175,43 @@
   <div id="brand"><div class="dot"></div><div class="word">CAPCO</div><div class="sub">Technology Team</div></div>
 
   <div class="scene" id="s1">
-    <div class="panel-wrap s1"><img src="panels/panel1.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s1"><img class="bg" src="panels/panel1.png"><div class="card"><img src="panels/panel1.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">PEOPLE + TECHNOLOGY + BETTER OUTCOMES</div></div>
   </div>
 
   <div class="scene" id="s2">
-    <div class="panel-wrap s2"><img src="panels/panel2.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s2"><img class="bg" src="panels/panel2.png"><div class="card"><img src="panels/panel2.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">CLEAN → TRANSFORM → ANALYZE → INSIGHT</div></div>
   </div>
 
   <div class="scene" id="s3">
-    <div class="panel-wrap s3"><img src="panels/panel3.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s3"><img class="bg" src="panels/panel3.png"><div class="card"><img src="panels/panel3.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">BUILD. CONNECT. SCALE.</div></div>
   </div>
 
   <div class="scene" id="s4">
-    <div class="panel-wrap s4"><img src="panels/panel4.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s4"><img class="bg" src="panels/panel4.png"><div class="card"><img src="panels/panel4.png"></div></div>
     <div class="buggag"><div class="track"></div><div class="scanner"></div><div class="bug">🐞</div></div>
     <div class="tagline-wrap"><div class="tagline">HIGHER QUALITY. GREATER CONFIDENCE.</div></div>
   </div>
 
   <div class="scene" id="s5">
-    <div class="panel-wrap s5"><img src="panels/panel5.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s5"><img class="bg" src="panels/panel5.png"><div class="card"><img src="panels/panel5.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">AUTOMATE → MODERNIZE → ACCELERATE</div></div>
   </div>
 
   <div class="scene" id="s6">
-    <div class="panel-wrap s6"><img src="panels/panel6.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s6"><img class="bg" src="panels/panel6.png"><div class="card"><img src="panels/panel6.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">RIGHT DATA. RIGHT CONTROLS. GREATER TRUST.</div></div>
   </div>
 
   <div class="scene" id="s7">
-    <div class="panel-wrap s7"><img src="panels/panel7.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s7"><img class="bg" src="panels/panel7.png"><div class="card"><img src="panels/panel7.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">FROM LEGACY TO MODERN.</div></div>
   </div>
 
   <div class="scene" id="s8">
-    <div class="panel-wrap s8"><img src="panels/panel8.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s8"><img class="bg" src="panels/panel8.png"><div class="card"><img src="panels/panel8.png"></div></div>
     <div class="connectlabel cl1">DATA ENGINEERING</div>
     <div class="connectlabel cl2">CLOUD &amp; DEVOPS</div>
     <div class="connectlabel cl3">GOVERNANCE</div>
@@ -237,8 +221,7 @@
   </div>
 
   <div class="scene" id="s9">
-    <div class="panel-wrap s9"><img src="panels/panel8.png"></div>
-    <div class="scrim-top"></div><div class="scrim-bottom"></div>
+    <div class="panel-wrap s9"><img class="bg" src="panels/panel8.png"><div class="card"><img src="panels/panel8.png"></div></div>
     <div class="words">
       <div class="word9">DATA</div><div class="word9">ENGINEERING</div><div class="word9">CLOUD</div><div class="word9">QUALITY</div>
       <div class="word9">DEVOPS</div><div class="word9">GOVERNANCE</div><div class="word9">MIGRATION</div>
@@ -260,8 +243,6 @@
   TIMELINE.scenes.forEach(function(s, i){
     var el = document.getElementById(s.id);
     var dur = (s.end - s.start) + 0.6;
-    var wrap = el.querySelector('.panel-wrap img');
-    if (wrap) wrap.style.setProperty('--dur', dur + 's');
     var wrapEl = el.querySelector('.panel-wrap');
     if (wrapEl) wrapEl.style.setProperty('--dur', dur + 's');
     setTimeout(function(){ el.classList.add('active'); }, ms(s.start));
