@@ -49,10 +49,11 @@ chip, bug gag, scene-8 labels) are lower-thirds over the picture.
 
 Slide 1 is not from the storyboard: it is the separate "Our Team — People,
 Roles and Tools" illustration (`our_team_clean.png`), with the illustration's
-fictional names removed — the whiteboard name badges were filled with each
-column's background colour and the names under each person were inpainted
-(OpenCV Telea) after locating them with Tesseract OCR; role labels and tools
-were kept.
+fictional names removed. Names were located with Tesseract OCR; on the
+whiteboard each column's tool list was shifted up into the name badge's place
+and the column given a common, shorter bottom (its own rounded top corners
+flipped), so no blank block remains; the names under each person were
+inpainted (OpenCV Telea). Role labels and tools were kept.
 
 ## Pipeline
 
