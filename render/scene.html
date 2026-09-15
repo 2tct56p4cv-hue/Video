@@ -1,0 +1,661 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Capco Technology Team — Render</title>
+<style>
+  :root{
+    --navy-950:#060E1E;
+    --navy-900:#0B1E3D;
+    --navy-800:#12305C;
+    --navy-700:#1B4278;
+    --blue-500:#2E6FE0;
+    --teal-400:#22C2AE;
+    --teal-300:#5FE0CC;
+    --amber-400:#E8A33D;
+    --red-400:#E5544F;
+    --paper:#F4F7FB;
+    --line:rgba(255,255,255,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#000;overflow:hidden;}
+  body{width:1920px;height:1080px;}
+  #stage{
+    position:relative;
+    width:1920px;height:1080px;
+    background:radial-gradient(1200px 700px at 80% -10%, #123055 0%, var(--navy-900) 55%, var(--navy-950) 100%);
+    font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+    color:#fff;
+    overflow:hidden;
+  }
+  .sora{ font-family:"Arial","Helvetica Neue",sans-serif; font-weight:800; }
+  .mono{ font-family:"Consolas","Menlo",monospace; }
+
+  /* persistent brand mark */
+  #brand{
+    position:absolute; top:44px; left:56px; z-index:50;
+    display:flex; align-items:center; gap:12px;
+    opacity:0.9;
+  }
+  #brand .dot{width:10px;height:10px;border-radius:50%;background:var(--teal-400);}
+  #brand .word{ font-size:20px; letter-spacing:0.22em; font-weight:800; }
+  #brand .sub{ font-size:11px; letter-spacing:0.18em; color:var(--teal-300); text-transform:uppercase; margin-left:4px;}
+
+  /* scenes */
+  .scene{
+    position:absolute; inset:0;
+    opacity:0;
+    transition:opacity 1.1s ease;
+    pointer-events:none;
+  }
+  .scene.active{ opacity:1; }
+
+  .tagline-wrap{
+    position:absolute; left:0; right:0; bottom:92px;
+    display:flex; justify-content:center; z-index:40;
+  }
+  .tagline{
+    font-size:30px; font-weight:700; letter-spacing:0.04em;
+    color:var(--navy-900);
+    background:linear-gradient(120deg,var(--teal-300),var(--teal-400));
+    padding:14px 34px; border-radius:10px;
+    box-shadow:0 20px 40px -12px rgba(0,0,0,0.5);
+    opacity:0; transform:translateY(16px);
+    max-width:1400px; text-align:center;
+  }
+  .tagline.show{ animation:taglineIn 0.8s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes taglineIn{ to{ opacity:1; transform:translateY(0); } }
+
+  .vignette{
+    position:absolute; inset:0;
+    background:radial-gradient(1400px 900px at 50% 40%, transparent 55%, rgba(0,0,0,0.35) 100%);
+    pointer-events:none;
+  }
+  .grid-bg{
+    position:absolute; inset:0; opacity:0.06;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg,var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+  }
+
+  /* ============ SCENE 1 ============ */
+  .headline{
+    position:absolute; top:150px; left:0; right:0; text-align:center;
+    font-size:52px; font-weight:800; letter-spacing:0.01em;
+    opacity:0; transform:translateY(-14px);
+    animation:fadeDown 1.2s 0.3s ease forwards;
+  }
+  @keyframes fadeDown{ to{opacity:1; transform:translateY(0);} }
+  #s1 .cards{
+    position:absolute; top:330px; left:0; right:0; height:430px;
+    display:flex; justify-content:center; align-items:center; gap:70px;
+  }
+  #s1 .card{
+    width:300px; height:360px; border-radius:20px;
+    background:linear-gradient(160deg,var(--navy-800),var(--navy-700));
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.55);
+    padding:26px; position:relative;
+    opacity:0; transform:translateY(40px) scale(.94);
+    animation:cardIn 0.9s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  #s1 .card:nth-child(1){animation-delay:0.6s;}
+  #s1 .card:nth-child(2){animation-delay:0.85s;}
+  #s1 .card:nth-child(3){animation-delay:1.1s;}
+  #s1 .card:nth-child(4){animation-delay:1.35s;}
+  @keyframes cardIn{ to{opacity:1; transform:translateY(0) scale(1);} }
+  #s1 .card .icon{
+    width:60px;height:60px;border-radius:14px;
+    background:rgba(34,194,174,0.16); border:1px solid rgba(34,194,174,0.4);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; margin-bottom:18px;
+  }
+  #s1 .card .role{ font-size:20px; font-weight:700; }
+  #s1 .card .desc{ font-size:14px; color:#B9C7E6; margin-top:6px; line-height:1.5; }
+  #s1 .card .bars{ position:absolute; bottom:24px; left:26px; right:26px; display:flex; gap:6px; align-items:flex-end; height:56px; }
+  #s1 .card .bars i{ flex:1; background:var(--teal-400); border-radius:3px 3px 0 0; opacity:0.75; animation:barPulse 2.4s ease-in-out infinite; }
+  #s1 .card .bars i:nth-child(1){height:40%; animation-delay:0s;}
+  #s1 .card .bars i:nth-child(2){height:70%; animation-delay:.2s;}
+  #s1 .card .bars i:nth-child(3){height:50%; animation-delay:.4s;}
+  #s1 .card .bars i:nth-child(4){height:85%; animation-delay:.6s;}
+  #s1 .card .bars i:nth-child(5){height:60%; animation-delay:.8s;}
+  @keyframes barPulse{ 0%,100%{ transform:scaleY(1);} 50%{ transform:scaleY(1.18);} }
+  #s1 svg.links{ position:absolute; inset:0; z-index:1; }
+  #s1 .links path{ stroke:var(--teal-400); stroke-width:2; fill:none; opacity:0.85; stroke-dasharray:14 10; animation:flowDash 1.6s linear infinite; }
+  @keyframes flowDash{ to{ stroke-dashoffset:-48; } }
+
+  /* ============ SCENE 2 ============ */
+  #s2 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s2 .sources{ position:absolute; top:210px; left:56px; width:330px; display:flex; flex-direction:column; gap:16px; }
+  #s2 .src{
+    background:rgba(255,255,255,0.05); border:1px solid var(--line); border-radius:10px;
+    padding:14px 18px; font-size:16px; color:#C9D6F0;
+    opacity:0; transform:translateX(-40px);
+  }
+  #s2.active .src{ animation:slideIn 0.7s ease forwards; }
+  #s2 .src:nth-child(1){animation-delay:.2s;}
+  #s2 .src:nth-child(2){animation-delay:.45s;}
+  #s2 .src:nth-child(3){animation-delay:.7s;}
+  #s2 .src:nth-child(4){animation-delay:.95s;}
+  @keyframes slideIn{ to{ opacity:1; transform:translateX(0);} }
+
+  #s2 .pipe{ position:absolute; top:250px; left:430px; right:430px; height:8px; border-radius:4px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  #s2 .pipe i{ position:absolute; top:0; bottom:0; width:120px; background:linear-gradient(90deg,transparent,var(--teal-300),transparent); animation:pipeFlow 2.2s linear infinite; }
+  @keyframes pipeFlow{ from{ left:-120px;} to{ left:100%;} }
+
+  #s2 .toolrow{ position:absolute; top:300px; left:430px; right:430px; display:flex; justify-content:space-between; }
+  #s2 .tool{ font-family:Consolas,Menlo,monospace; font-size:15px; padding:8px 14px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid var(--line); opacity:0; transform:translateY(14px); }
+  #s2.active .tool{ animation:toolPop .6s ease forwards; }
+  #s2 .tool:nth-child(1){animation-delay:1.1s;}
+  #s2 .tool:nth-child(2){animation-delay:1.35s;}
+  #s2 .tool:nth-child(3){animation-delay:1.6s;}
+  #s2 .tool:nth-child(4){animation-delay:1.85s;}
+  #s2 .tool:nth-child(5){animation-delay:2.1s;}
+  #s2 .tool:nth-child(6){animation-delay:2.35s;}
+  @keyframes toolPop{ to{opacity:1; transform:translateY(0);} }
+
+  #s2 .dash{ position:absolute; top:410px; right:56px; width:760px; height:430px; background:linear-gradient(160deg,var(--navy-800),var(--navy-700)); border:1px solid var(--line); border-radius:18px; padding:28px; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); }
+  #s2 .dash .lbl{ font-size:14px; color:var(--teal-300); letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px; }
+  #s2 .dash .row{ display:flex; gap:26px; height:280px; }
+  #s2 .bars2{ flex:1; display:flex; align-items:flex-end; gap:14px; }
+  #s2 .bars2 i{ flex:1; background:linear-gradient(180deg,var(--teal-300),var(--blue-500)); border-radius:5px 5px 0 0; height:0%; }
+  #s2.active .bars2 i{ animation:growBar 1.4s cubic-bezier(.2,.8,.2,1) forwards; }
+  #s2 .bars2 i:nth-child(1){height:55%; animation-delay:2.2s;}
+  #s2 .bars2 i:nth-child(2){height:80%; animation-delay:2.35s;}
+  #s2 .bars2 i:nth-child(3){height:40%; animation-delay:2.5s;}
+  #s2 .bars2 i:nth-child(4){height:95%; animation-delay:2.65s;}
+  #s2 .bars2 i:nth-child(5){height:65%; animation-delay:2.8s;}
+  @keyframes growBar{ from{height:0%;} }
+  #s2 .ring{ width:220px; height:220px; }
+  #s2 .ring circle{ fill:none; stroke-width:18; }
+  #s2 .ring .bg{ stroke:rgba(255,255,255,.08); }
+  #s2 .ring .fg{ stroke:var(--teal-400); stroke-linecap:round; stroke-dasharray:597; stroke-dashoffset:597; transform:rotate(-90deg); transform-origin:50% 50%; }
+  #s2.active .ring .fg{ animation:ringFill 1.8s 2.3s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes ringFill{ to{ stroke-dashoffset:140; } }
+
+  /* ============ SCENE 3 ============ */
+  #s3 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s3 .mono-block{ position:absolute; top:210px; left:56px; width:640px; height:560px; background:#081327; border:1px solid var(--line); border-radius:16px; padding:24px; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); }
+  #s3 .mono-block .dots{ display:flex; gap:8px; margin-bottom:16px; }
+  #s3 .mono-block .dots i{ width:11px; height:11px; border-radius:50%; background:#3a4256; }
+  #s3 .mono-block .dots i:nth-child(1){background:#E5544F;}
+  #s3 .mono-block .dots i:nth-child(2){background:#E8A33D;}
+  #s3 .mono-block .dots i:nth-child(3){background:#22C2AE;}
+  #s3 .code-line{ font-family:Consolas,Menlo,monospace; font-size:16px; color:#8FE3D2; white-space:pre; overflow:hidden; border-right:2px solid var(--teal-300); width:0; animation:typing 1.1s steps(30,end) forwards, caretBlink .8s step-end infinite; }
+  #s3 .code-line.l1{ animation-delay:.3s; color:#7BB2FF; }
+  #s3 .code-line.l2{ animation-delay:1.5s; }
+  #s3 .code-line.l3{ animation-delay:2.7s; color:#F2C879;}
+  #s3 .code-line.l4{ animation-delay:3.9s; }
+  @keyframes typing{ from{width:0;} to{width:34ch;} }
+  @keyframes caretBlink{ 50%{ border-color:transparent; } }
+
+  #s3 .arch{ position:absolute; top:210px; right:56px; width:780px; height:560px; }
+  #s3 .mono-box{ position:absolute; left:50%; top:70px; transform:translateX(-50%); width:220px; height:90px; border-radius:12px; background:var(--navy-700); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-weight:700; opacity:1; }
+  #s3.active .mono-box{ animation:monoBreak 0.8s 0.4s ease forwards; }
+  @keyframes monoBreak{ to{ opacity:0; transform:translateX(-50%) scale(.7); } }
+  #s3 .micro{ position:absolute; width:120px; height:80px; border-radius:10px; background:linear-gradient(160deg,var(--teal-400),var(--blue-500)); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#06210f; opacity:0; box-shadow:0 16px 30px -10px rgba(0,0,0,.5); }
+  #s3.active .micro{ animation:microIn .8s cubic-bezier(.2,.8,.2,1) forwards; }
+  #s3 .m1{ left:40px; top:40px; animation-delay:1.0s;}
+  #s3 .m2{ left:220px; top:10px; animation-delay:1.15s;}
+  #s3 .m3{ left:420px; top:40px; animation-delay:1.3s;}
+  #s3 .m4{ left:600px; top:100px; animation-delay:1.45s;}
+  #s3 .m5{ left:60px; top:190px; animation-delay:1.6s;}
+  #s3 .m6{ left:250px; top:210px; animation-delay:1.75s;}
+  #s3 .m7{ left:450px; top:200px; animation-delay:1.9s;}
+  @keyframes microIn{ to{opacity:1; transform:translateY(0);} }
+  #s3 .cloudring{ position:absolute; left:50%; bottom:40px; transform:translateX(-50%); width:300px; height:300px; border-radius:50%; border:2px dashed rgba(255,255,255,.18); animation:spin 18s linear infinite; }
+  @keyframes spin{ to{ transform:translateX(-50%) rotate(360deg); } }
+  #s3 .cloudbadges{ position:absolute; left:50%; bottom:40px; transform:translateX(-50%); width:300px; height:300px; }
+  #s3 .badge3{ position:absolute; font-size:15px; font-weight:800; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); opacity:.35; }
+  #s3.active .badge3{ animation:badgePulse 6.6s ease-in-out infinite; }
+  #s3 .badge3.aws{ left:-10px; top:20px; animation-delay:0s;}
+  #s3 .badge3.az{ right:-30px; top:110px; animation-delay:2.2s;}
+  #s3 .badge3.gcp{ left:40px; bottom:0px; animation-delay:4.4s;}
+  @keyframes badgePulse{ 0%,70%,100%{ opacity:.35; box-shadow:none;} 12%{ opacity:1; box-shadow:0 0 26px rgba(34,194,174,.7);} }
+
+  /* ============ SCENE 4 ============ */
+  #s4 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s4 .checklist{ position:absolute; top:220px; left:56px; width:560px; display:flex; flex-direction:column; gap:20px; }
+  #s4 .chk{ display:flex; align-items:center; gap:16px; font-size:22px; color:#C9D6F0; opacity:.4; }
+  #s4 .chk .box{ width:30px; height:30px; border-radius:8px; border:2px solid var(--teal-400); display:flex; align-items:center; justify-content:center; font-size:16px; color:transparent; flex:0 0 auto; }
+  #s4.active .chk{ animation:chkOn .4s ease forwards; }
+  #s4.active .chk .box{ animation:boxFill .4s ease forwards; }
+  #s4 .chk:nth-child(1){animation-delay:.3s;} #s4 .chk:nth-child(1) .box{animation-delay:.3s;}
+  #s4 .chk:nth-child(2){animation-delay:1.0s;} #s4 .chk:nth-child(2) .box{animation-delay:1.0s;}
+  #s4 .chk:nth-child(3){animation-delay:1.7s;} #s4 .chk:nth-child(3) .box{animation-delay:1.7s;}
+  #s4 .chk:nth-child(4){animation-delay:2.4s;} #s4 .chk:nth-child(4) .box{animation-delay:2.4s;}
+  @keyframes chkOn{ to{opacity:1;} }
+  @keyframes boxFill{ to{ background:var(--teal-400); color:var(--navy-900); } }
+
+  #s4 .metrics{ position:absolute; top:210px; right:56px; width:720px; height:540px; display:flex; gap:26px; }
+  #s4 .mcard{ flex:1; background:linear-gradient(160deg,var(--navy-800),var(--navy-700)); border:1px solid var(--line); border-radius:18px; padding:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 30px 60px -20px rgba(0,0,0,.5); }
+  #s4 .mcard .lbl{ font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--teal-300); margin-bottom:14px; }
+  #s4 .ring4{ width:230px; height:230px; }
+  #s4 .ring4 circle{ fill:none; stroke-width:18; }
+  #s4 .ring4 .bg{ stroke:rgba(255,255,255,.08); }
+  #s4 .ring4 .fg{ stroke:#3FE07A; stroke-linecap:round; stroke-dasharray:597; stroke-dashoffset:597; transform:rotate(-90deg); transform-origin:50% 50%; }
+  #s4.active .ring4 .fg{ animation:ringFill4 2s .6s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes ringFill4{ to{ stroke-dashoffset:12; } }
+  #s4 .pct{ position:absolute; font-size:42px; font-weight:800; }
+  #s4 .defect-num{ font-size:74px; font-weight:800; color:var(--amber-400); }
+
+  #s4 .buggag{ position:absolute; bottom:60px; left:56px; right:56px; height:90px; }
+  #s4 .track{ position:absolute; left:0; right:0; top:50%; height:2px; background:rgba(255,255,255,.15); }
+  #s4 .door{ position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:14px; padding:8px 14px; border-radius:8px; background:rgba(255,255,255,.06); border:1px solid var(--line); letter-spacing:.08em; }
+  #s4 .bug{ position:absolute; top:50%; left:0; transform:translateY(-50%); font-size:34px; opacity:0; }
+  #s4.active .bug{ animation:bugWalk 5.5s 5.2s cubic-bezier(.3,0,.2,1) forwards; }
+  @keyframes bugWalk{
+    0%{ left:0px; opacity:0; transform:translateY(-50%) scaleX(1);}
+    8%{ opacity:1; }
+    55%{ left:900px; opacity:1; transform:translateY(-50%) scaleX(1);}
+    62%{ left:940px; transform:translateY(-50%) scaleX(1);}
+    64%{ filter:drop-shadow(0 0 14px #E5544F); }
+    72%{ left:900px; transform:translateY(-50%) scaleX(-1);}
+    100%{ left:20px; opacity:0; transform:translateY(-50%) scaleX(-1);}
+  }
+  #s4 .scanner{ position:absolute; right:170px; top:50%; transform:translate(50%,-50%); width:6px; height:70px; background:var(--red-400); opacity:0; box-shadow:0 0 24px var(--red-400); }
+  #s4.active .scanner{ animation:scanFlash .5s 9.4s ease-in-out 2; }
+  @keyframes scanFlash{ 0%,100%{opacity:0;} 50%{opacity:1;} }
+
+  /* ============ SCENE 5 ============ */
+  #s5 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s5 .loopwrap{ position:absolute; top:220px; left:56px; width:820px; height:560px; }
+  #s5 .node5{ position:absolute; width:150px; padding:14px 16px; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid var(--line); font-size:16px; font-weight:700; text-align:center; opacity:.45; }
+  #s5.active .node5{ animation:nodeLit 6s linear infinite; }
+  #s5 .n-build{ left:0; top:80px; animation-delay:0s;}
+  #s5 .n-test{ left:320px; top:0px; animation-delay:1.5s;}
+  #s5 .n-deploy{ left:640px; top:80px; animation-delay:3s;}
+  #s5 .n-monitor{ left:320px; top:400px; animation-delay:4.5s;}
+  @keyframes nodeLit{ 0%,12%,100%{ opacity:.45; box-shadow:none;} 4%{opacity:1; box-shadow:0 0 26px rgba(34,194,174,.65);} }
+  #s5 .loopwrap svg{ position:absolute; inset:0; }
+  #s5 .loopwrap .track{ fill:none; stroke:rgba(255,255,255,.12); stroke-width:3; }
+  #s5 .loopwrap .runner{ fill:var(--teal-300); filter:drop-shadow(0 0 10px rgba(95,224,204,.9)); }
+  #s5.active .loopwrap .runner{ offset-path:path('M75,155 C 75,80 320,50 395,120 C 470,190 640,150 640,155 C 640,240 470,270 395,270 C 320,270 75,240 75,155 Z'); animation:runnerGo 6s linear infinite; }
+  @keyframes runnerGo{ to{ offset-distance:100%; } }
+
+  #s5 .servers{ position:absolute; top:220px; right:56px; width:760px; height:560px; }
+  #s5 .rack{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  #s5 .rack .u{ background:#1b2a45; border:1px solid rgba(255,255,255,.1); border-radius:8px; opacity:1; }
+  #s5.active .rack .u{ animation:dissolveOld 1s ease forwards; animation-delay:calc(var(--i) * 0.06s); }
+  @keyframes dissolveOld{ to{ opacity:0; } }
+  #s5 .platform{ position:absolute; inset:0; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; opacity:0; }
+  #s5.active .platform{ animation:platformIn 1s 1.4s ease forwards; }
+  @keyframes platformIn{ to{opacity:1;} }
+  #s5 .platform .p{ background:linear-gradient(160deg,var(--teal-400),var(--blue-500)); border-radius:14px; opacity:0; transform:scale(.7); }
+  #s5.active .platform .p{ animation:pIn .6s cubic-bezier(.3,1.4,.4,1) forwards; }
+  #s5 .platform .p:nth-child(1){animation-delay:1.5s;}
+  #s5 .platform .p:nth-child(2){animation-delay:1.62s;}
+  #s5 .platform .p:nth-child(3){animation-delay:1.74s;}
+  #s5 .platform .p:nth-child(4){animation-delay:1.86s;}
+  #s5 .platform .p:nth-child(5){animation-delay:1.98s;}
+  #s5 .platform .p:nth-child(6){animation-delay:2.10s;}
+  @keyframes pIn{ to{opacity:1; transform:scale(1);} }
+
+  /* ============ SCENE 6 ============ */
+  #s6 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s6 .flows{ position:absolute; top:230px; left:56px; width:980px; height:420px; display:flex; flex-direction:column; justify-content:space-between; }
+  #s6 .flowline{ position:relative; height:3px; background:rgba(255,255,255,.1); border-radius:2px; overflow:visible; }
+  #s6 .flowline i{ position:absolute; top:-4px; width:60px; height:11px; border-radius:6px; background:linear-gradient(90deg,transparent,var(--teal-300),transparent); animation:flow6 3.4s linear infinite; }
+  #s6 .flowline.warn i{ background:linear-gradient(90deg,transparent,var(--amber-400),transparent); }
+  @keyframes flow6{ from{left:-60px;} to{left:100%;} }
+  #s6 .flag{ position:absolute; top:-30px; opacity:0; }
+  #s6.active .flag{ animation:flagPop .6s 3.5s cubic-bezier(.3,1.4,.4,1) forwards; }
+  @keyframes flagPop{ to{ opacity:1; transform:translateY(-6px); } }
+  #s6 .flag .pin{ background:var(--amber-400); color:var(--navy-900); font-size:12px; font-weight:800; padding:5px 10px; border-radius:6px; white-space:nowrap; }
+
+  #s6 .concepts{ position:absolute; top:230px; right:56px; width:640px; display:flex; flex-wrap:wrap; gap:12px; align-content:flex-start; }
+  #s6 .cchip{ font-size:15px; padding:10px 16px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid var(--line); opacity:0; transform:translateY(12px); }
+  #s6.active .cchip{ animation:chipIn .6s ease forwards; }
+  #s6 .cchip:nth-child(1){animation-delay:.4s;}
+  #s6 .cchip:nth-child(2){animation-delay:.75s;}
+  #s6 .cchip:nth-child(3){animation-delay:1.1s;}
+  #s6 .cchip:nth-child(4){animation-delay:1.45s;}
+  #s6 .cchip:nth-child(5){animation-delay:1.8s;}
+  #s6 .cchip:nth-child(6){animation-delay:2.15s;}
+  @keyframes chipIn{ to{opacity:1; transform:translateY(0);} }
+
+  #s6 .shield{ position:absolute; right:150px; bottom:80px; width:180px; height:200px; }
+  #s6 .shield path{ fill:none; stroke:var(--teal-300); stroke-width:6; stroke-linejoin:round; stroke-dasharray:640; stroke-dashoffset:640; }
+  #s6.active .shield path{ animation:drawShield 2s 2.6s ease forwards; }
+  @keyframes drawShield{ to{ stroke-dashoffset:0; } }
+  #s6 .shield .check{ fill:none; stroke:#3FE07A; stroke-width:8; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:80; stroke-dashoffset:80; }
+  #s6.active .shield .check{ animation:drawShield 0.6s 4.6s ease forwards; }
+
+  /* ============ SCENE 7 ============ */
+  #s7 .title{ position:absolute; top:96px; left:56px; font-size:40px; font-weight:800; }
+  #s7 .split{ position:absolute; top:200px; left:56px; right:56px; height:420px; display:flex; gap:40px; }
+  #s7 .side{ flex:1; border-radius:16px; position:relative; overflow:hidden; border:1px solid var(--line); }
+  #s7 .side.legacy{ background:linear-gradient(160deg,#2a2f3d,#1c202b); }
+  #s7 .side.cloud{ background:linear-gradient(160deg,var(--navy-800),var(--navy-700)); box-shadow:inset 0 0 80px rgba(34,194,174,.15); }
+  #s7 .side .lbl{ position:absolute; top:18px; left:20px; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#9FB1D6; }
+  #s7 .side .blocks{ position:absolute; inset:50px 30px 30px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  #s7 .side.legacy .blocks div{ background:#3a4256; border-radius:6px; opacity:.8; }
+  #s7 .side.cloud .blocks div{ background:linear-gradient(160deg,var(--teal-400),var(--blue-500)); border-radius:10px; opacity:0; transform:scale(.7); }
+  #s7.active .side.cloud .blocks div{ animation:pIn .6s cubic-bezier(.3,1.4,.4,1) forwards; }
+  #s7 .side.cloud .blocks div:nth-child(1){animation-delay:.3s;}
+  #s7 .side.cloud .blocks div:nth-child(2){animation-delay:.42s;}
+  #s7 .side.cloud .blocks div:nth-child(3){animation-delay:.54s;}
+  #s7 .side.cloud .blocks div:nth-child(4){animation-delay:.66s;}
+  #s7 .side.cloud .blocks div:nth-child(5){animation-delay:.78s;}
+  #s7 .side.cloud .blocks div:nth-child(6){animation-delay:.90s;}
+
+  #s7 .bridge{ position:absolute; top:400px; left:200px; right:200px; height:24px; }
+  #s7 .bridge .span{ position:absolute; top:10px; left:0; height:4px; background:linear-gradient(90deg,#4a5470,var(--teal-300)); width:0; border-radius:2px; }
+  #s7.active .bridge .span{ animation:spanGrow 1.4s .3s ease forwards; }
+  @keyframes spanGrow{ to{ width:100%; } }
+  #s7 .packet{ position:absolute; top:-4px; width:14px; height:14px; border-radius:4px; background:var(--teal-300); opacity:0; box-shadow:0 0 14px rgba(95,224,204,.9); }
+  #s7.active .packet{ animation:packetGo 2.4s linear infinite; }
+  #s7 .p1{ animation-delay:2.0s !important; }
+  #s7 .p2{ animation-delay:2.9s !important; }
+  #s7 .p3{ animation-delay:3.8s !important; }
+  @keyframes packetGo{ 0%{ left:0%; opacity:0;} 8%{opacity:1;} 92%{opacity:1;} 100%{ left:97%; opacity:0;} }
+
+  #s7 .milestones{ position:absolute; top:460px; left:200px; right:200px; display:flex; justify-content:space-between; }
+  #s7 .ms{ font-size:15px; font-weight:800; letter-spacing:.08em; padding:10px 18px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); opacity:.4; }
+  #s7.active .ms{ animation:msLit .5s ease forwards; }
+  #s7 .ms:nth-child(1){animation-delay:1.9s;}
+  #s7 .ms:nth-child(2){animation-delay:2.8s;}
+  #s7 .ms:nth-child(3){animation-delay:3.7s;}
+  #s7 .ms:nth-child(4){animation-delay:4.6s;}
+  @keyframes msLit{ to{ opacity:1; background:var(--teal-400); color:var(--navy-900);} }
+
+  /* ============ SCENE 8 ============ */
+  #s8 .netwrap{ position:absolute; inset:150px 260px 200px; }
+  #s8 svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  #s8 .edge{ stroke:var(--teal-400); stroke-width:2.5; fill:none; stroke-dasharray:400; stroke-dashoffset:400; opacity:.9; }
+  #s8.active .edge{ animation:edgeDraw 0.9s ease forwards; }
+  #s8 .e1{animation-delay:.3s !important;} #s8 .e2{animation-delay:1.0s !important;} #s8 .e3{animation-delay:1.7s !important;}
+  #s8 .e4{animation-delay:2.4s !important;} #s8 .e5{animation-delay:3.1s !important;} #s8 .e6{animation-delay:3.8s !important;}
+  @keyframes edgeDraw{ to{ stroke-dashoffset:0; } }
+  #s8 .node8{ position:absolute; transform:translate(-50%,-50%); width:150px; padding:12px 6px; border-radius:12px; background:rgba(255,255,255,.05); border:1px solid var(--line); text-align:center; font-size:14px; font-weight:700; opacity:0; }
+  #s8.active .node8{ animation:nodeIn .5s ease forwards; }
+  #s8 .n1{animation-delay:0s !important;} #s8 .n2{animation-delay:.6s !important;} #s8 .n3{animation-delay:1.3s !important;}
+  #s8 .n4{animation-delay:2.0s !important;} #s8 .n5{animation-delay:2.7s !important;} #s8 .n6{animation-delay:3.4s !important;} #s8 .n7{animation-delay:4.0s !important;}
+  @keyframes nodeIn{ to{ opacity:1; } }
+  #s8 .center8{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(0); width:220px; text-align:center; font-size:22px; font-weight:800; padding:18px; border-radius:14px; background:linear-gradient(120deg,var(--teal-300),var(--teal-400)); color:var(--navy-900); box-shadow:0 20px 50px -12px rgba(0,0,0,.6); }
+  #s8.active .center8{ animation:centerPop .6s 4.4s cubic-bezier(.3,1.5,.4,1) forwards; }
+  @keyframes centerPop{ to{ transform:translate(-50%,-50%) scale(1); } }
+
+  /* ============ SCENE 9 / FINAL ============ */
+  #s9 .cast{ position:absolute; left:0; right:0; bottom:260px; display:flex; justify-content:center; gap:26px; }
+  #s9 .person{ width:64px; height:64px; border-radius:50%; background:linear-gradient(160deg,var(--teal-400),var(--blue-500)); opacity:0; transform:translateY(30px); box-shadow:0 14px 26px -8px rgba(0,0,0,.5); }
+  #s9.active .person{ animation:personIn .7s cubic-bezier(.2,.8,.2,1) forwards; }
+  #s9 .person:nth-child(1){animation-delay:.15s;} #s9 .person:nth-child(2){animation-delay:.3s;} #s9 .person:nth-child(3){animation-delay:.45s;}
+  #s9 .person:nth-child(4){animation-delay:.6s;} #s9 .person:nth-child(5){animation-delay:.75s;} #s9 .person:nth-child(6){animation-delay:.9s;} #s9 .person:nth-child(7){animation-delay:1.05s;}
+  @keyframes personIn{ to{opacity:1; transform:translateY(0);} }
+  #s9 .skyline{ position:absolute; left:0; right:0; bottom:150px; height:130px; display:flex; align-items:flex-end; justify-content:center; gap:10px; opacity:.5; }
+  #s9 .skyline i{ width:34px; background:var(--navy-700); border-top:2px solid var(--teal-400); }
+  #s9 .words{ position:absolute; left:0; right:0; top:120px; display:flex; justify-content:center; flex-wrap:wrap; gap:16px; }
+  #s9 .word9{ font-size:16px; font-weight:800; letter-spacing:.1em; color:#B9C7E6; opacity:0; transform:translateY(-16px); }
+  #s9.active .word9{ animation:wordRise 1.1s cubic-bezier(.2,.8,.2,1) forwards; }
+  #s9 .word9:nth-child(1){animation-delay:1.3s;} #s9 .word9:nth-child(2){animation-delay:1.5s;} #s9 .word9:nth-child(3){animation-delay:1.7s;}
+  #s9 .word9:nth-child(4){animation-delay:1.9s;} #s9 .word9:nth-child(5){animation-delay:2.1s;} #s9 .word9:nth-child(6){animation-delay:2.3s;} #s9 .word9:nth-child(7){animation-delay:2.5s;}
+  @keyframes wordRise{ 60%{opacity:1; transform:translateY(6px) scale(1.05);} 100%{opacity:0; transform:translateY(70px) scale(.8);} }
+  #s9 .impact{ position:absolute; left:0; right:0; top:130px; text-align:center; font-size:0; opacity:0; transform:scale(.7); }
+  #s9.active .impact{ animation:impactPop .8s 3.4s cubic-bezier(.3,1.4,.4,1) forwards; }
+  @keyframes impactPop{ to{ opacity:1; transform:scale(1); font-size:64px; } }
+  #s9 .impact span{ font-weight:800; letter-spacing:.06em; background:linear-gradient(120deg,var(--teal-300),var(--teal-400)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  #closing{
+    position:absolute; inset:0; z-index:60; opacity:0;
+    background:radial-gradient(900px 500px at 50% 20%, rgba(34,194,174,.28), transparent 60%), var(--navy-950);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px;
+    transition:opacity 1.3s ease;
+  }
+  #closing.show{ opacity:1; }
+  #closing .lines{ font-size:56px; font-weight:800; text-align:center; line-height:1.3; }
+  #closing .tag{ font-family:Consolas,Menlo,monospace; font-size:16px; letter-spacing:.16em; color:var(--teal-300); text-transform:uppercase; }
+  #closing .capco9{ font-size:38px; font-weight:800; letter-spacing:.14em; margin-top:10px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="grid-bg"></div>
+
+  <div id="brand"><div class="dot"></div><div class="word">CAPCO</div><div class="sub">Technology Team</div></div>
+
+  <!-- SCENE 1 -->
+  <div class="scene" id="s1">
+    <div class="headline">One Technology Team</div>
+    <svg class="links" viewBox="0 0 1920 1080">
+      <path d="M 415,510 C 700,460 700,460 995,510" />
+      <path d="M 995,510 C 1290,460 1290,460 1575,510" />
+      <path d="M 415,510 C 700,700 1290,700 1575,510" />
+    </svg>
+    <div class="cards">
+      <div class="card"><div class="icon">◔</div><div class="role">Data &amp; Analytics</div><div class="desc">Data Engineers, Analysts</div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="card"><div class="icon">{ }</div><div class="role">Software &amp; Cloud</div><div class="desc">Developers, Architects</div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="card"><div class="icon">✓</div><div class="role">Testing &amp; Quality</div><div class="desc">QA Engineers, Leads</div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="card"><div class="icon">☁</div><div class="role">DevOps &amp; Platform</div><div class="desc">DevOps, SRE, Cloud Eng.</div><div class="bars"><i></i><i></i><i></i><i></i><i></i></div></div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">PEOPLE + TECHNOLOGY + BETTER OUTCOMES</div></div>
+  </div>
+
+  <!-- SCENE 2 -->
+  <div class="scene" id="s2">
+    <div class="title">Data &amp; Analytics</div>
+    <div class="sources">
+      <div class="src">Banking Data</div>
+      <div class="src">Customer Data</div>
+      <div class="src">Regulatory Data</div>
+      <div class="src">External Data</div>
+    </div>
+    <div class="pipe"><i></i></div>
+    <div class="toolrow">
+      <div class="tool">Python</div><div class="tool">SQL</div><div class="tool">BigQuery</div>
+      <div class="tool">GCP</div><div class="tool">Airflow</div><div class="tool">dbt</div>
+    </div>
+    <div class="dash">
+      <div class="lbl">Business Insight Dashboard</div>
+      <div class="row">
+        <div class="bars2"><i></i><i></i><i></i><i></i><i></i></div>
+        <svg class="ring" viewBox="0 0 220 220">
+          <circle class="bg" cx="110" cy="110" r="95"/>
+          <circle class="fg" cx="110" cy="110" r="95"/>
+        </svg>
+      </div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">CLEAN → TRANSFORM → ANALYZE → INSIGHT</div></div>
+  </div>
+
+  <!-- SCENE 3 -->
+  <div class="scene" id="s3">
+    <div class="title">Software Engineering &amp; Cloud</div>
+    <div class="mono-block">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="code-line l1">import cloud.deploy</div>
+      <div class="code-line l2">service = build(app)</div>
+      <div class="code-line l3">service.scale(auto=True)</div>
+      <div class="code-line l4">deploy(service, secure)</div>
+    </div>
+    <div class="arch">
+      <div class="mono-box">Legacy Monolith</div>
+      <div class="micro m1">Auth</div><div class="micro m2">Payments</div><div class="micro m3">Ledger</div><div class="micro m4">Reporting</div>
+      <div class="micro m5">Gateway</div><div class="micro m6">Notify</div><div class="micro m7">Audit</div>
+      <div class="cloudring"></div>
+      <div class="cloudbadges">
+        <div class="badge3 aws">AWS</div><div class="badge3 az">AZURE</div><div class="badge3 gcp">GOOGLE CLOUD</div>
+      </div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">BUILD. CONNECT. SCALE.</div></div>
+  </div>
+
+  <!-- SCENE 4 -->
+  <div class="scene" id="s4">
+    <div class="title">Testing &amp; Quality</div>
+    <div class="checklist">
+      <div class="chk"><div class="box">✓</div>Test Planning</div>
+      <div class="chk"><div class="box">✓</div>Test Execution</div>
+      <div class="chk"><div class="box">✓</div>Defect Management</div>
+      <div class="chk"><div class="box">✓</div>Quality Reporting</div>
+    </div>
+    <div class="metrics">
+      <div class="mcard">
+        <div class="lbl">Pass Rate</div>
+        <div style="position:relative;">
+          <svg class="ring4" viewBox="0 0 230 230"><circle class="bg" cx="115" cy="115" r="95"/><circle class="fg" cx="115" cy="115" r="95"/></svg>
+          <div class="pct" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">98%</div>
+        </div>
+      </div>
+      <div class="mcard"><div class="lbl">Open Defects</div><div class="defect-num">12</div><div style="color:#9FB1D6; font-size:13px; margin-top:8px;">Tosca &middot; NeoLoad &middot; LoadRunner</div></div>
+    </div>
+    <div class="buggag">
+      <div class="track"></div>
+      <div class="door">PRODUCTION</div>
+      <div class="scanner"></div>
+      <div class="bug">🐞</div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">HIGHER QUALITY. GREATER CONFIDENCE.</div></div>
+  </div>
+
+  <!-- SCENE 5 -->
+  <div class="scene" id="s5">
+    <div class="title">DevOps &amp; Platform Modernization</div>
+    <div class="loopwrap">
+      <svg viewBox="0 0 720 340">
+        <path class="track" d="M75,155 C 75,80 320,50 395,120 C 470,190 640,150 640,155 C 640,240 470,270 395,270 C 320,270 75,240 75,155 Z"/>
+        <circle class="runner" r="9" cx="75" cy="155"/>
+      </svg>
+      <div class="node5 n-build">BUILD</div>
+      <div class="node5 n-test">TEST</div>
+      <div class="node5 n-deploy">DEPLOY</div>
+      <div class="node5 n-monitor">MONITOR</div>
+    </div>
+    <div class="servers">
+      <div class="rack" id="rack"></div>
+      <div class="platform">
+        <div class="p"></div><div class="p"></div><div class="p"></div>
+        <div class="p"></div><div class="p"></div><div class="p"></div>
+      </div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">AUTOMATE → MODERNIZE → ACCELERATE</div></div>
+  </div>
+
+  <!-- SCENE 6 -->
+  <div class="scene" id="s6">
+    <div class="title">Risk, Compliance &amp; Data Governance</div>
+    <div class="flows">
+      <div class="flowline"><i style="animation-delay:0s"></i></div>
+      <div class="flowline warn"><i style="animation-delay:.6s"></i><div class="flag" style="left:40%"><div class="pin">⚠ Flagged for review</div></div></div>
+      <div class="flowline"><i style="animation-delay:1.1s"></i></div>
+      <div class="flowline"><i style="animation-delay:1.7s"></i></div>
+      <div class="flowline"><i style="animation-delay:2.3s"></i></div>
+    </div>
+    <div class="concepts">
+      <div class="cchip">AML</div><div class="cchip">Transaction Monitoring</div><div class="cchip">Data Governance</div>
+      <div class="cchip">Data Quality</div><div class="cchip">Regulatory Reporting</div><div class="cchip">Audit</div>
+    </div>
+    <svg class="shield" viewBox="0 0 180 200">
+      <path d="M90,10 L165,40 L165,95 C165,150 130,180 90,195 C50,180 15,150 15,95 L15,40 Z"/>
+      <path class="check" d="M55,100 L82,127 L128,72"/>
+    </svg>
+    <div class="tagline-wrap"><div class="tagline">RIGHT DATA. RIGHT CONTROLS. GREATER TRUST.</div></div>
+  </div>
+
+  <!-- SCENE 7 -->
+  <div class="scene" id="s7">
+    <div class="title">Migration &amp; Delivery</div>
+    <div class="split">
+      <div class="side legacy"><div class="lbl">Legacy</div><div class="blocks"><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+      <div class="side cloud"><div class="lbl">Cloud</div><div class="blocks"><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+    </div>
+    <div class="bridge"><div class="span"></div><div class="packet p1" ></div><div class="packet p2"></div><div class="packet p3"></div></div>
+    <div class="milestones">
+      <div class="ms">PLAN</div><div class="ms">MIGRATE</div><div class="ms">VALIDATE</div><div class="ms">GO LIVE</div>
+    </div>
+    <div class="tagline-wrap"><div class="tagline">FROM LEGACY TO MODERN.</div></div>
+  </div>
+
+  <!-- SCENE 8 -->
+  <div class="scene" id="s8">
+    <div class="headline" style="top:96px;">The Capabilities Connect</div>
+    <div class="netwrap">
+      <svg viewBox="0 0 1400 730">
+        <path class="edge e1" d="M700,60 L280,220"/>
+        <path class="edge e2" d="M280,220 L200,470"/>
+        <path class="edge e3" d="M200,470 L700,660"/>
+        <path class="edge e4" d="M700,660 L1200,470"/>
+        <path class="edge e5" d="M1200,470 L1120,220"/>
+        <path class="edge e6" d="M1120,220 L700,60"/>
+      </svg>
+      <div class="node8 n1" style="left:700px; top:60px;">Data Engineering</div>
+      <div class="node8 n2" style="left:280px; top:220px;">Analytics</div>
+      <div class="node8 n3" style="left:200px; top:470px;">Cloud &amp; DevOps</div>
+      <div class="node8 n4" style="left:700px; top:660px;">Testing</div>
+      <div class="node8 n5" style="left:1200px; top:470px;">Governance</div>
+      <div class="node8 n6" style="left:1120px; top:220px;">Migration</div>
+      <div class="center8">CONNECTED<br>EXPERTISE</div>
+    </div>
+  </div>
+
+  <!-- SCENE 9 / FINAL -->
+  <div class="scene" id="s9">
+    <div class="headline" style="top:96px;">One Team</div>
+    <div class="words">
+      <div class="word9">DATA</div><div class="word9">ENGINEERING</div><div class="word9">CLOUD</div><div class="word9">QUALITY</div>
+      <div class="word9">DEVOPS</div><div class="word9">GOVERNANCE</div><div class="word9">MIGRATION</div>
+    </div>
+    <div class="impact"><span>IMPACT</span></div>
+    <div class="skyline">
+      <i style="height:60px"></i><i style="height:100px"></i><i style="height:70px"></i><i style="height:130px"></i>
+      <i style="height:90px"></i><i style="height:60px"></i><i style="height:110px"></i><i style="height:80px"></i>
+    </div>
+    <div class="cast">
+      <div class="person"></div><div class="person"></div><div class="person"></div><div class="person"></div><div class="person"></div>
+    </div>
+  </div>
+
+  <div id="closing">
+    <div class="lines">ONE TEAM.<br>CONNECTED DELIVERY.<br>LASTING IMPACT.</div>
+    <div class="tag">Ideas &middot; Technology &middot; Lasting Impact</div>
+    <div class="capco9">CAPCO</div>
+  </div>
+
+  <div class="vignette"></div>
+</div>
+
+<script>
+  // build scene5 rack bars
+  (function(){
+    var rack = document.getElementById('rack');
+    for(var i=0;i<12;i++){
+      var d = document.createElement('div');
+      d.className='u';
+      d.style.setProperty('--i', i);
+      rack.appendChild(d);
+    }
+  })();
+
+  var TIMELINE = {"scenes": [{"id": "s1", "start": 0.0, "voStart": 2.5, "voDur": 16.432, "voEnd": 18.932, "end": 23.432}, {"id": "s2", "start": 23.432, "voStart": 25.432, "voDur": 20.56, "voEnd": 45.992, "end": 50.492}, {"id": "s3", "start": 50.492, "voStart": 52.492, "voDur": 22.304, "voEnd": 74.796, "end": 79.296}, {"id": "s4", "start": 79.296, "voStart": 81.296, "voDur": 16.176, "voEnd": 97.472, "end": 104.472}, {"id": "s5", "start": 104.472, "voStart": 106.472, "voDur": 15.584, "voEnd": 122.056, "end": 126.556}, {"id": "s6", "start": 126.556, "voStart": 128.556, "voDur": 20.256, "voEnd": 148.812, "end": 153.312}, {"id": "s7", "start": 153.312, "voStart": 155.312, "voDur": 18.992, "voEnd": 174.304, "end": 178.804}, {"id": "s8", "start": 178.804, "voStart": 180.804, "voDur": 17.824, "voEnd": 198.628, "end": 203.628}, {"id": "s9", "start": 203.628, "voStart": 205.828, "voDur": 12.736, "voEnd": 218.564, "end": 225.564}], "total": 225.564};
+
+  function ms(sec){ return Math.max(0, Math.round(sec*1000)); }
+
+  TIMELINE.scenes.forEach(function(s, i){
+    var el = document.getElementById(s.id);
+    setTimeout(function(){ el.classList.add('active'); }, ms(s.start));
+    var prev = TIMELINE.scenes[i - 1];
+    if (prev) {
+      var prevEl = document.getElementById(prev.id);
+      // fade the previous scene out just before this one fades in, so the
+      // crossfade overlaps briefly instead of both scenes staying opaque
+      setTimeout(function(){ prevEl.classList.remove('active'); }, ms(s.start - 0.5));
+    }
+  });
+
+  // taglines: show near end of VO for each scene
+  TIMELINE.scenes.forEach(function(s){
+    var el = document.querySelector('#'+s.id+' .tagline');
+    if(!el) return;
+    var showAt = s.voEnd - s.start - 0.2;
+    setTimeout(function(){ el.classList.add('show'); }, ms(s.start + Math.max(showAt,0.2)));
+  });
+
+  // closing card
+  var last = TIMELINE.scenes[TIMELINE.scenes.length-1];
+  setTimeout(function(){
+    document.getElementById('closing').classList.add('show');
+  }, ms(last.voEnd + 1.2));
+
+  window.__DONE_AT__ = TIMELINE.total;
+</script>
+</body>
+</html>
