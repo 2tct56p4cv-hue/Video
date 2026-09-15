@@ -4,92 +4,116 @@ import wave, json, os
 SC = os.path.dirname(os.path.abspath(__file__))
 tl = json.load(open(os.path.join(SC, "timeline.json")))
 TOTAL = tl["total"] + 1.5
-
 SR = 44100
+BPM = 112.0
+BEAT = 60.0 / BPM
+N = int(TOTAL * SR)
+t = np.arange(N) / SR
+rng = np.random.default_rng(11)
 
-def note_freq(semitones_from_a4):
-    return 440.0 * (2 ** (semitones_from_a4 / 12.0))
+def f(semi):  # semitones from A4
+    return 440.0 * 2 ** (semi / 12.0)
 
-# simple corporate-pad chord progression, 4 bars looping, in A minor / C major-ish, subtle & upbeat
-# chords as semitone offsets from A4
-chords = [
-    [-12, -8, -5, 0],   # Am
-    [-10, -7, -3, 2],   # C
-    [-7, -3, 0, 5],     # F-ish  (using relative simple triads)
-    [-5, -1, 2, 7],     # G
-]
-bar_len = 4.0  # seconds per chord
-n_bars = int(np.ceil(TOTAL / bar_len))
+# A minor progression, 2 bars (8 beats) per chord: Am, F, C, G  (root, third, fifth, octave)
+chords = [[-12, -9, -5, 0], [-16, -12, -9, -4], [-21, -17, -14, -9], [-14, -10, -7, -2]]
+CHORD_BEATS = 8
 
-t = np.linspace(0, TOTAL, int(TOTAL * SR), endpoint=False)
-audio = np.zeros_like(t)
+def lowpass(x, cutoff):
+    a = np.exp(-2 * np.pi * cutoff / SR)
+    y = np.empty_like(x); acc = 0.0
+    for i in range(len(x)):
+        acc = a * acc + (1 - a) * x[i]; y[i] = acc
+    return y
 
-# pad layer: soft sine/triangle blend per chord tone, with slow attack
-for bar in range(n_bars):
-    start = bar * bar_len
-    end = min(start + bar_len, TOTAL)
-    if start >= TOTAL:
-        break
-    chord = chords[bar % len(chords)]
-    mask = (t >= start) & (t < end)
-    local_t = t[mask] - start
-    env = np.clip(local_t / 0.6, 0, 1) * np.clip((end - start - local_t) / 0.6, 0, 1)
-    for semis in chord:
-        freq = note_freq(semis)
-        wave_tone = 0.5 * np.sin(2 * np.pi * freq * t[mask]) + 0.5 * (2*(local_t*freq % 1)-1) * 0.15
-        audio[mask] += wave_tone * env * 0.028
+def saw(freq, tt):
+    return 2.0 * ((tt * freq) % 1.0) - 1.0
 
-# gentle rhythmic pulse (soft pluck) on beats, gives "upbeat" motion without being busy
-beat_len = 1.0
-n_beats = int(np.ceil(TOTAL / beat_len))
-pulse = np.zeros_like(t)
-rng = np.random.default_rng(7)
+out = np.zeros(N)
+
+# ---- pad: two detuned saws per chord tone, heavy lowpass, slow attack ----
+pad = np.zeros(N)
+n_chords = int(np.ceil(TOTAL / (CHORD_BEATS * BEAT)))
+for c in range(n_chords):
+    s = c * CHORD_BEATS * BEAT; e = min(s + CHORD_BEATS * BEAT, TOTAL)
+    if s >= TOTAL: break
+    m = (t >= s) & (t < e); lt = t[m] - s
+    env = np.clip(lt / 1.2, 0, 1) * np.clip((e - s - lt) / 1.2, 0, 1)
+    for semi in chords[c % 4][:3]:
+        fr = f(semi)
+        pad[m] += (saw(fr * 1.003, t[m]) + saw(fr * 0.997, t[m])) * 0.5 * env
+pad = lowpass(pad, 700) * 0.10
+
+# ---- arpeggio: 16th-note chord tones one octave up, plucky, lowpassed (the "tech" motor) ----
+arp = np.zeros(N)
+step = BEAT / 4
+n_steps = int(np.ceil(TOTAL / step))
+pattern = [0, 1, 2, 3, 2, 1, 0, 2]
+for k in range(n_steps):
+    s = k * step
+    if s >= TOTAL: break
+    chord = chords[int(s // (CHORD_BEATS * BEAT)) % 4]
+    semi = chord[pattern[k % len(pattern)]] + 12
+    fr = f(semi)
+    m = (t >= s) & (t < s + step * 0.95); lt = t[m] - s
+    env = np.exp(-lt * 14.0) * np.clip(lt / 0.004, 0, 1)
+    arp[m] += (np.sign(np.sin(2 * np.pi * fr * t[m])) * 0.6 + np.sin(2 * np.pi * fr * t[m]) * 0.4) * env
+arp = lowpass(arp, 2400) * 0.075
+
+# ---- sub bass: chord root two octaves down, per beat, gated ----
+bass = np.zeros(N)
+n_beats = int(np.ceil(TOTAL / BEAT))
 for b in range(n_beats):
-    bt = b * beat_len
-    if bt >= TOTAL:
-        break
-    chord = chords[(b // 4) % len(chords)]
-    semis = chord[0] + 12  # root, one octave up, plucky
-    freq = note_freq(semis)
-    dur = 0.35
-    mask = (t >= bt) & (t < bt + dur)
-    local_t = t[mask] - bt
-    env = np.exp(-local_t * 9.0)
-    pulse[mask] += np.sin(2 * np.pi * freq * t[mask]) * env * 0.05
+    s = b * BEAT
+    if s >= TOTAL: break
+    chord = chords[int(s // (CHORD_BEATS * BEAT)) % 4]
+    fr = f(chord[0] - 12)
+    m = (t >= s) & (t < s + BEAT * 0.9); lt = t[m] - s
+    env = np.clip(lt / 0.01, 0, 1) * np.exp(-lt * 3.0)
+    bass[m] += np.sin(2 * np.pi * fr * t[m]) * env
+bass *= 0.16
 
-audio = audio + pulse
+# ---- drums: soft kick on every beat, closed hat on 8th off-beats ----
+drums = np.zeros(N)
+for b in range(n_beats):
+    s = b * BEAT
+    if s >= TOTAL: break
+    m = (t >= s) & (t < s + 0.25); lt = t[m] - s
+    sweep = 110.0 * np.exp(-lt * 28.0) + 42.0
+    phase = 2 * np.pi * np.cumsum(sweep) / SR
+    drums[m] += np.sin(phase) * np.exp(-lt * 18.0) * 0.55
+    # hat on the off-beat
+    hs = s + BEAT / 2
+    hm = (t >= hs) & (t < hs + 0.035); hl = t[hm] - hs
+    noise = rng.standard_normal(hm.sum())
+    noise = np.diff(np.concatenate([[0], noise]))  # crude high-pass
+    drums[hm] += noise * np.exp(-hl * 120.0) * 0.06
+    # extra 16th hat every other beat for drive
+    if b % 2 == 1:
+        hs2 = s + BEAT * 0.75
+        hm2 = (t >= hs2) & (t < hs2 + 0.025); hl2 = t[hm2] - hs2
+        n2 = np.diff(np.concatenate([[0], rng.standard_normal(hm2.sum())]))
+        drums[hm2] += n2 * np.exp(-hl2 * 140.0) * 0.035
 
-# very soft shimmering high harmonic sparkle every 2 bars for "modern tech" feel
-sparkle = np.zeros_like(t)
-for bar in range(0, n_bars, 2):
-    start = bar * bar_len + 2.0
-    if start >= TOTAL:
-        break
-    chord = chords[bar % len(chords)]
-    freq = note_freq(chord[-1] + 12)
-    mask = (t >= start) & (t < start + 1.6)
-    local_t = t[mask] - start
-    env = np.exp(-local_t * 2.2) * np.clip(local_t/0.1,0,1)
-    sparkle[mask] += np.sin(2*np.pi*freq*t[mask]) * env * 0.02
+# ---- occasional high "ping" every 4 bars ----
+ping = np.zeros(N)
+for c in range(0, n_chords, 2):
+    s = c * CHORD_BEATS * BEAT + BEAT * 3.5
+    if s >= TOTAL: break
+    fr = f(chords[c % 4][2] + 24)
+    m = (t >= s) & (t < s + 1.2); lt = t[m] - s
+    ping[m] += np.sin(2 * np.pi * fr * t[m]) * np.exp(-lt * 3.0) * 0.05
 
-audio = audio + sparkle
-
-# gentle limiter / normalize, keep it subtle underneath narration
-peak = np.max(np.abs(audio)) + 1e-9
-audio = audio / peak * 0.55
+mix = pad + arp + bass + drums + ping
+mix = np.tanh(mix * 1.6)             # gentle saturation / limiter
+mix = mix / (np.max(np.abs(mix)) + 1e-9) * 0.6
 
 # fade in / fade out
-fade_n = int(1.5 * SR)
-audio[:fade_n] *= np.linspace(0, 1, fade_n)
-audio[-fade_n:] *= np.linspace(1, 0, fade_n)
+fade = int(2.0 * SR)
+mix[:fade] *= np.linspace(0, 1, fade)
+mix[-fade:] *= np.linspace(1, 0, fade)
 
-pcm = np.int16(np.clip(audio, -1, 1) * 32767)
-
-out_path = os.path.join(SC, "audio", "music.wav")
-with wave.open(out_path, "w") as f:
-    f.setnchannels(1)
-    f.setsampwidth(2)
-    f.setframerate(SR)
-    f.writeframes(pcm.tobytes())
-
-print("wrote", out_path, "duration", TOTAL)
+pcm = np.int16(np.clip(mix, -1, 1) * 32767)
+outp = os.path.join(SC, "audio", "music.wav")
+with wave.open(outp, "w") as w:
+    w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
+print("wrote", outp, "duration", round(TOTAL, 2), "bpm", BPM)
