@@ -19,12 +19,12 @@ often — see "Possible upgrade" below.
 | --- | --- |
 | Source artwork | The Capco storyboard image the user attached — cropped into its 8 numbered panels and used as the actual on-screen visuals (Ken Burns pan/zoom), not redrawn |
 | Panel crop-boundary detection | Python + Pillow/NumPy, sampling pixel colors along scan-lines to find the real card edges (see "Cropping the storyboard" below) instead of a naive even grid split |
-| Panel upscaling/sharpening | ffmpeg `scale` (lanczos) + `unsharp` filter, since the source panels are ~400×520px and need to fill a 1920×1080 frame |
+| Panel super-resolution | Real-ESRGAN x4plus (weights from its GitHub release) run through a self-contained RRDBNet in PyTorch (`upscale_panels.py`), since the source panels are only ~400×420px |
 | Voice-over | [Piper](https://github.com/rhasspy/piper) — offline neural TTS; a different narrator per capability (ryan, amy, alan, southern_english_female, lessac, kathleen, danny — US/UK, male/female), intro and closing share the host voice; mapping in `gen_narration.py` |
 | Background music | Procedurally generated with NumPy: 112 BPM electronic bed (16th-note synth arpeggio, soft kick, hats, sub bass, low-passed pad), mixed at -14 dB and side-chain ducked under the narration with ffmpeg `sidechaincompress` — no royalty-free-music API was reachable from this environment |
 | Animation / motion graphics | Hand-written HTML/CSS/JS (Ken Burns keyframes, crossfades, the scene-8 capability-network overlay, the scene-4 bug sight-gag) |
-| Rendering the animation to video | [Playwright](https://playwright.dev/) driving headless Chromium, using `recordVideo` to capture the page in real time |
-| Audio mixing & final encode | ffmpeg — mixes narration + music, re-encodes the recorded `.webm` to H.264/AAC `.mp4` |
+| Rendering the animation to video | [Playwright](https://playwright.dev/) driving headless Chromium frame by frame: the page exposes `__seek(t)` (scene state + every CSS animation's `currentTime` set deterministically), one lossless PNG per frame at 25 fps (`render_frames.js`) |
+| Audio mixing & final encode | ffmpeg — mixes narration + music; `encode_frames.sh` encodes the PNG sequence with libx264 CRF 17 (preset slow) + AAC 192k |
 
 ## Cropping the storyboard
 
@@ -41,9 +41,9 @@ background between cards: 1: 0-428, 86-510 · 2: 434-833 · 3: 843-1262 ·
 Each panel is then lanczos-upscaled to 1700px wide and lightly
 sharpened.
 
-In the video every slide fills the full frame width (no borders or blurred
-backdrop); the camera holds on the top of the slide, pans slowly down to the
-bottom and holds, so the whole slide is seen at full size. Overlays (tagline
+In the video every slide is first shown whole at full frame height (sides
+extended with a blurred continuation of the slide, no border), then the
+camera pushes in ~1.5× on the slide's focal area and holds. Overlays (tagline
 chip, bug gag, scene-8 labels) are lower-thirds over the picture.
 
 ## Pipeline
@@ -62,11 +62,11 @@ chip, bug gag, scene-8 labels) are lower-thirds over the picture.
    few small overlays (tagline chip, bug gag, capability-network labels)
    sit on top. Driven by `setTimeout`s scheduled from the injected
    `timeline.json`.
-5. **`record.js`** — Playwright loads `scene.html` in headless Chromium and
-   records it in real time via `recordVideo` (produces a silent `.webm`).
-6. **`assemble_final.sh`** — mixes narration (full volume) with music
-   (ducked ~-9dB) into `final_audio.wav`, then re-encodes the `.webm` to
-   H.264/AAC `.mp4` with ffmpeg, muxing in that audio track.
+5. **`render_frames.js`** — Playwright loads `scene.html`, calls `__seek(t)`
+   for every frame (25 fps) and saves a lossless PNG per frame.
+6. **`encode_frames.sh`** — encodes the PNG sequence with the mixed
+   soundtrack (narration + side-chain-ducked music) into a high-quality
+   H.264/AAC `.mp4`.
 
 ## Regenerating
 
@@ -79,8 +79,9 @@ python3 gen_narration.py        # -> timeline.json, audio/*_raw.wav
 python3 gen_music.py            # -> audio/music.wav
 bash build_narration_track.sh   # -> audio/narration.wav
 # inject timeline.json into scene.html in place of __TIMELINE_JSON__
-node record.js                  # -> video_raw/*.webm  (real-time capture, ~4 min)
-bash assemble_final.sh          # -> capco_technology_team.mp4
+python3 upscale_panels.py panels_src panels RealESRGAN_x4plus.pth   # 4x super-resolution
+node render_frames.js           # -> frames/%06d.png (25 fps, ~12 min)
+bash encode_frames.sh           # -> capco_technology_team.mp4
 ```
 
 ## Possible upgrade: Remotion

@@ -47,8 +47,9 @@
   .scene.active{ opacity:1; }
 
   .panel-wrap{ position:absolute; inset:0; overflow:hidden; background:#060E1E; }
-  .panel-wrap .card{ position:absolute; left:0; top:0; width:100%; will-change:transform; }
-  .panel-wrap .card img{ display:block; width:100%; height:auto; }
+  .panel-wrap img.bg{ position:absolute; inset:-60px; width:calc(100% + 120px); height:calc(100% + 120px); object-fit:cover; filter:blur(34px) brightness(0.55) saturate(1.1); }
+  .panel-wrap .card{ position:absolute; top:0; left:50%; height:1080px; transform:translateX(-50%); will-change:transform; }
+  .panel-wrap .card img{ display:block; height:100%; width:auto; }
 
   .tagline-wrap{
     position:absolute; left:0; right:0; bottom:16px; z-index:40;
@@ -76,9 +77,17 @@
   .kicker.show{ animation:taglineIn 0.7s ease forwards; }
 
   /* Ken Burns per-scene: each scene gets its own keyframes so start/end framing is intentional */
-  /* full-width slide: hold on the top, pan down to the bottom, hold; --pan is set per scene by JS */
-  @keyframes kb-pan{ 0%{ transform:translateY(0);} 18%{ transform:translateY(0);} 82%{ transform:translateY(var(--pan,0px));} 100%{ transform:translateY(var(--pan,0px));} }
-  .panel-wrap .card{ animation:kb-pan var(--dur,20s) cubic-bezier(.45,0,.2,1) forwards; }
+  @keyframes kb-push{ 0%{ transform:translateX(-50%) scale(1);} 26%{ transform:translateX(-50%) scale(1);} 80%{ transform:translateX(-50%) scale(1.5);} 100%{ transform:translateX(-50%) scale(1.5);} }
+  .panel-wrap .card{ animation:kb-push var(--dur,20s) cubic-bezier(.45,0,.2,1) forwards; }
+  .panel-wrap.s1 .card{ transform-origin:50% 58%; }
+  .panel-wrap.s2 .card{ transform-origin:58% 55%; }
+  .panel-wrap.s3 .card{ transform-origin:50% 48%; }
+  .panel-wrap.s4 .card{ transform-origin:60% 42%; }
+  .panel-wrap.s5 .card{ transform-origin:42% 48%; }
+  .panel-wrap.s6 .card{ transform-origin:58% 40%; }
+  .panel-wrap.s7 .card{ transform-origin:50% 55%; }
+  .panel-wrap.s8 .card{ transform-origin:50% 55%; }
+  .panel-wrap.s9 .card{ transform-origin:50% 68%; }
 
   /* ---- scene 4 bug gag overlay (kept, layered on top of the real art) ---- */
   #s4 .buggag{ position:absolute; bottom:28px; left:60px; right:60px; height:60px; z-index:30; }
@@ -150,43 +159,43 @@
   <div id="brand"><div class="dot"></div><div class="word">CAPCO</div><div class="sub">Technology Team</div></div>
 
   <div class="scene" id="s1">
-    <div class="panel-wrap s1"><div class="card"><img src="panels/panel1.png"></div></div>
+    <div class="panel-wrap s1"><img class="bg" src="panels/panel1.png"><div class="card"><img src="panels/panel1.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">PEOPLE + TECHNOLOGY + BETTER OUTCOMES</div></div>
   </div>
 
   <div class="scene" id="s2">
-    <div class="panel-wrap s2"><div class="card"><img src="panels/panel2.png"></div></div>
+    <div class="panel-wrap s2"><img class="bg" src="panels/panel2.png"><div class="card"><img src="panels/panel2.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">CLEAN → TRANSFORM → ANALYZE → INSIGHT</div></div>
   </div>
 
   <div class="scene" id="s3">
-    <div class="panel-wrap s3"><div class="card"><img src="panels/panel3.png"></div></div>
+    <div class="panel-wrap s3"><img class="bg" src="panels/panel3.png"><div class="card"><img src="panels/panel3.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">BUILD. CONNECT. SCALE.</div></div>
   </div>
 
   <div class="scene" id="s4">
-    <div class="panel-wrap s4"><div class="card"><img src="panels/panel4.png"></div></div>
+    <div class="panel-wrap s4"><img class="bg" src="panels/panel4.png"><div class="card"><img src="panels/panel4.png"></div></div>
     <div class="buggag"><div class="track"></div><div class="scanner"></div><div class="bug">🐞</div></div>
     <div class="tagline-wrap"><div class="tagline">HIGHER QUALITY. GREATER CONFIDENCE.</div></div>
   </div>
 
   <div class="scene" id="s5">
-    <div class="panel-wrap s5"><div class="card"><img src="panels/panel5.png"></div></div>
+    <div class="panel-wrap s5"><img class="bg" src="panels/panel5.png"><div class="card"><img src="panels/panel5.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">AUTOMATE → MODERNIZE → ACCELERATE</div></div>
   </div>
 
   <div class="scene" id="s6">
-    <div class="panel-wrap s6"><div class="card"><img src="panels/panel6.png"></div></div>
+    <div class="panel-wrap s6"><img class="bg" src="panels/panel6.png"><div class="card"><img src="panels/panel6.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">RIGHT DATA. RIGHT CONTROLS. GREATER TRUST.</div></div>
   </div>
 
   <div class="scene" id="s7">
-    <div class="panel-wrap s7"><div class="card"><img src="panels/panel7.png"></div></div>
+    <div class="panel-wrap s7"><img class="bg" src="panels/panel7.png"><div class="card"><img src="panels/panel7.png"></div></div>
     <div class="tagline-wrap"><div class="tagline">FROM LEGACY TO MODERN.</div></div>
   </div>
 
   <div class="scene" id="s8">
-    <div class="panel-wrap s8"><div class="card"><img src="panels/panel8.png"></div></div>
+    <div class="panel-wrap s8"><img class="bg" src="panels/panel8.png"><div class="card"><img src="panels/panel8.png"></div></div>
     <div class="connectlabel cl1">DATA ENGINEERING</div>
     <div class="connectlabel cl2">CLOUD &amp; DEVOPS</div>
     <div class="connectlabel cl3">GOVERNANCE</div>
@@ -196,7 +205,7 @@
   </div>
 
   <div class="scene" id="s9">
-    <div class="panel-wrap s9"><div class="card"><img src="panels/panel8.png"></div></div>
+    <div class="panel-wrap s9"><img class="bg" src="panels/panel8.png"><div class="card"><img src="panels/panel8.png"></div></div>
     <div class="words">
       <div class="word9">DATA</div><div class="word9">ENGINEERING</div><div class="word9">CLOUD</div><div class="word9">QUALITY</div>
       <div class="word9">DEVOPS</div><div class="word9">GOVERNANCE</div><div class="word9">MIGRATION</div>
@@ -213,36 +222,35 @@
 
 <script>
   var TIMELINE = {"scenes": [{"id": "s1", "start": 0.0, "voStart": 2.5, "voDur": 27.945, "voEnd": 30.445, "end": 34.945}, {"id": "s2", "start": 34.945, "voStart": 36.945, "voDur": 23.584, "voEnd": 60.529, "end": 65.029}, {"id": "s3", "start": 65.029, "voStart": 67.029, "voDur": 25.008, "voEnd": 92.037, "end": 96.537}, {"id": "s4", "start": 96.537, "voStart": 98.537, "voDur": 17.264, "voEnd": 115.801, "end": 122.801}, {"id": "s5", "start": 122.801, "voStart": 124.801, "voDur": 15.52, "voEnd": 140.321, "end": 144.821}, {"id": "s6", "start": 144.821, "voStart": 146.821, "voDur": 20.48, "voEnd": 167.301, "end": 171.801}, {"id": "s7", "start": 171.801, "voStart": 173.801, "voDur": 17.488, "voEnd": 191.289, "end": 195.789}, {"id": "s8", "start": 195.789, "voStart": 197.789, "voDur": 21.536, "voEnd": 219.325, "end": 224.325}, {"id": "s9", "start": 224.325, "voStart": 226.525, "voDur": 12.376, "voEnd": 238.901, "end": 245.901}], "total": 245.901};
-  function ms(sec){ return Math.max(0, Math.round(sec*1000)); }
-
-  TIMELINE.scenes.forEach(function(s, i){
-    var el = document.getElementById(s.id);
-    var dur = (s.end - s.start) + 0.6;
-    var wrapEl = el.querySelector('.panel-wrap');
-    if (wrapEl) wrapEl.style.setProperty('--dur', dur + 's');
-    var im = el.querySelector('.panel-wrap .card img');
-    if (im) { var setPan = function(){ var hgt = im.getBoundingClientRect().height; wrapEl.style.setProperty('--pan', (-Math.max(0, hgt - 1080)) + 'px'); };
-      if (im.complete) setPan(); else im.addEventListener('load', setPan); }
-    setTimeout(function(){ el.classList.add('active');
-      document.getElementById('brand').style.opacity = '0.9'; }, ms(s.start));
-    var prev = TIMELINE.scenes[i - 1];
-    if (prev) {
-      var prevEl = document.getElementById(prev.id);
-      setTimeout(function(){ prevEl.classList.remove('active'); }, ms(s.start - 0.5));
-    }
-  });
-
+  var tagged = [];           // {anim, startT}
+  function tagNew(T){
+    var all = document.getAnimations();
+    all.forEach(function(a){ if (!a.__t){ a.__t = T; a.pause(); tagged.push(a); } });
+  }
+  var state = { scene:-1, tag:{}, closing:false };
   TIMELINE.scenes.forEach(function(s){
-    var el = document.querySelector('#'+s.id+' .tagline');
-    if(!el) return;
-    var showAt = s.voEnd - s.start - 0.2;
-    setTimeout(function(){ el.classList.add('show'); }, ms(s.start + Math.max(showAt,0.2)));
+    var wrap = document.querySelector('#'+s.id+' .panel-wrap');
+    wrap.style.setProperty('--dur', ((s.end - s.start) + 0.6) + 's');
   });
-
-  var last = TIMELINE.scenes[TIMELINE.scenes.length-1];
-  setTimeout(function(){
-    document.getElementById('closing').classList.add('show');
-  }, ms(last.voEnd + 1.2));
+  window.__seek = function(t){
+    // scene activation + crossfade (previous scene deactivates 0.5s before next starts)
+    TIMELINE.scenes.forEach(function(s, i){
+      var el = document.getElementById(s.id);
+      var next = TIMELINE.scenes[i+1];
+      var on = t >= s.start && (!next || t < next.start - 0.5);
+      if (on && !el.classList.contains('active')) { el.classList.add('active'); tagNew(s.start); }
+      if (!on && el.classList.contains('active') && next && t >= next.start - 0.5) { el.classList.remove('active'); tagNew(next.start - 0.5); }
+      var tl = el.querySelector('.tagline');
+      if (tl) { var showAt = s.start + Math.max(s.voEnd - s.start - 0.2, 0.2);
+        if (t >= showAt && !tl.classList.contains('show')) { tl.classList.add('show'); tagNew(showAt); } }
+    });
+    document.getElementById('brand').style.opacity = '0.9';
+    var last = TIMELINE.scenes[TIMELINE.scenes.length-1];
+    var cl = document.getElementById('closing');
+    if (t >= last.voEnd + 1.2 && !cl.classList.contains('show')) { cl.classList.add('show'); tagNew(last.voEnd + 1.2); }
+    tagNew(t);  // anything else that appeared
+    tagged.forEach(function(a){ var ct = (t - a.__t) * 1000; if (ct < 0) ct = 0; try { a.currentTime = ct; } catch(e){} });
+  };
 </script>
 </body>
 </html>
