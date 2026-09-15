@@ -34,9 +34,11 @@ grid (4 columns × 2 rows) with connector arrows between cards. An even
 aren't exactly half the image height — bleeds the bottom of row 1's cards
 into the top of row 2's crops. The real boundaries were found by sampling
 pixel colors along horizontal/vertical scan-lines to locate the navy gaps
-between cards. Final crop rectangles (x, width): columns at 0/402, 436/398,
-843/407, 1258/414; rows at y=88–524 (row 1, banner trimmed) and y=524–940
-(row 2). Each panel is then lanczos-upscaled to 1700px wide and lightly
+between cards. Final crop rectangles (x0-x1, y0-y1), measured from the near-white page
+background between cards: 1: 0-428, 86-510 · 2: 434-833 · 3: 843-1262 ·
+4: 1269-1667 (row 1) · 5: 4-430, 521-931 · 6: 435-834 · 7: 842-1229 ·
+8: 1237-1671 (row 2). Note the column-3/4 boundary differs between rows.
+Each panel is then lanczos-upscaled to 1700px wide and lightly
 sharpened.
 
 In the video every slide is shown **in full** (`.card`, height-fitted and
