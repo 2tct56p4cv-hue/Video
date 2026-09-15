@@ -20,7 +20,7 @@ const fs = require('fs');
   });
 
   const page = await context.newPage();
-  const file = 'file://' + path.resolve(__dirname, 'index.html');
+  const file = 'file://' + path.resolve(__dirname, 'scene.html');
   const t0 = Date.now();
   await page.goto(file);
   console.log('navigated, recording for', totalMs, 'ms');
