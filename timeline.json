@@ -4,74 +4,74 @@
       "id": "s1",
       "start": 0.0,
       "voStart": 2.5,
-      "voDur": 27.824,
-      "voEnd": 30.324,
-      "end": 34.824
+      "voDur": 27.945,
+      "voEnd": 30.445,
+      "end": 34.945
     },
     {
       "id": "s2",
-      "start": 34.824,
-      "voStart": 36.824,
-      "voDur": 21.312,
-      "voEnd": 58.136,
-      "end": 62.636
+      "start": 34.945,
+      "voStart": 36.945,
+      "voDur": 23.584,
+      "voEnd": 60.529,
+      "end": 65.029
     },
     {
       "id": "s3",
-      "start": 62.636,
-      "voStart": 64.636,
-      "voDur": 22.928,
-      "voEnd": 87.564,
-      "end": 92.064
+      "start": 65.029,
+      "voStart": 67.029,
+      "voDur": 25.008,
+      "voEnd": 92.037,
+      "end": 96.537
     },
     {
       "id": "s4",
-      "start": 92.064,
-      "voStart": 94.064,
-      "voDur": 17.312,
-      "voEnd": 111.376,
-      "end": 118.376
+      "start": 96.537,
+      "voStart": 98.537,
+      "voDur": 17.264,
+      "voEnd": 115.801,
+      "end": 122.801
     },
     {
       "id": "s5",
-      "start": 118.376,
-      "voStart": 120.376,
-      "voDur": 15.552,
-      "voEnd": 135.928,
-      "end": 140.428
+      "start": 122.801,
+      "voStart": 124.801,
+      "voDur": 15.52,
+      "voEnd": 140.321,
+      "end": 144.821
     },
     {
       "id": "s6",
-      "start": 140.428,
-      "voStart": 142.428,
-      "voDur": 20.736,
-      "voEnd": 163.164,
-      "end": 167.664
+      "start": 144.821,
+      "voStart": 146.821,
+      "voDur": 20.48,
+      "voEnd": 167.301,
+      "end": 171.801
     },
     {
       "id": "s7",
-      "start": 167.664,
-      "voStart": 169.664,
-      "voDur": 19.44,
-      "voEnd": 189.104,
-      "end": 193.604
+      "start": 171.801,
+      "voStart": 173.801,
+      "voDur": 17.488,
+      "voEnd": 191.289,
+      "end": 195.789
     },
     {
       "id": "s8",
-      "start": 193.604,
-      "voStart": 195.604,
-      "voDur": 17.296,
-      "voEnd": 212.9,
-      "end": 217.9
+      "start": 195.789,
+      "voStart": 197.789,
+      "voDur": 21.536,
+      "voEnd": 219.325,
+      "end": 224.325
     },
     {
       "id": "s9",
-      "start": 217.9,
-      "voStart": 220.1,
-      "voDur": 12.8,
-      "voEnd": 232.9,
-      "end": 239.9
+      "start": 224.325,
+      "voStart": 226.525,
+      "voDur": 12.376,
+      "voEnd": 238.901,
+      "end": 245.901
     }
   ],
-  "total": 239.9
+  "total": 245.901
 }

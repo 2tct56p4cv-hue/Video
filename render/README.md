@@ -20,7 +20,7 @@ often — see "Possible upgrade" below.
 | Source artwork | The Capco storyboard image the user attached — cropped into its 8 numbered panels and used as the actual on-screen visuals (Ken Burns pan/zoom), not redrawn |
 | Panel crop-boundary detection | Python + Pillow/NumPy, sampling pixel colors along scan-lines to find the real card edges (see "Cropping the storyboard" below) instead of a naive even grid split |
 | Panel upscaling/sharpening | ffmpeg `scale` (lanczos) + `unsharp` filter, since the source panels are ~400×520px and need to fill a 1920×1080 frame |
-| Voice-over | [Piper](https://github.com/rhasspy/piper) — offline neural TTS, `en_US-lessac-medium` voice |
+| Voice-over | [Piper](https://github.com/rhasspy/piper) — offline neural TTS; a different narrator per capability (ryan, amy, alan, southern_english_female, lessac, kathleen, danny — US/UK, male/female), intro and closing share the host voice; mapping in `gen_narration.py` |
 | Background music | Procedurally generated with NumPy (sine/triangle pads + a soft pluck pulse) — no royalty-free-music API was reachable from this environment |
 | Animation / motion graphics | Hand-written HTML/CSS/JS (Ken Burns keyframes, crossfades, the scene-8 capability-network overlay, the scene-4 bug sight-gag) |
 | Rendering the animation to video | [Playwright](https://playwright.dev/) driving headless Chromium, using `recordVideo` to capture the page in real time |

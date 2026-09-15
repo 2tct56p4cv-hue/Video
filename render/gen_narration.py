@@ -2,7 +2,19 @@ import json, subprocess, os, wave, contextlib
 
 SC = os.path.dirname(os.path.abspath(__file__))
 AUD = os.path.join(SC, "audio")
-VOICE = os.path.join(SC, "voice", "en-us-lessac-medium.onnx")
+VOICE_DIR = os.path.join(SC, "voice")
+# one narrator per capability; intro and closing share the "host" voice
+VOICES = {
+  "s1": "en-us-ryan-medium",
+  "s2": "en-us-amy-low",
+  "s3": "en-gb-alan-low",
+  "s4": "en-gb-southern_english_female-low",
+  "s5": "en-us-lessac-medium",
+  "s6": "en-us-kathleen-low",
+  "s7": "en-us-danny-low",
+  "s8": "en-us-amy-low",
+  "s9": "en-us-ryan-medium",
+}
 os.makedirs(AUD, exist_ok=True)
 
 scenes = [
@@ -42,7 +54,7 @@ t = 0.0
 for sid, text in scenes:
     raw = os.path.join(AUD, f"{sid}_raw.wav")
     subprocess.run(
-        ["python3", "-m", "piper", "-m", VOICE, "-f", raw],
+        ["python3", "-m", "piper", "-m", os.path.join(VOICE_DIR, VOICES[sid] + ".onnx"), "-f", raw],
         input=text.encode("utf-8"),
         check=True,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
