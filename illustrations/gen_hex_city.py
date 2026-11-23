@@ -6,7 +6,7 @@ import math, random
 
 random.seed(23)
 RADIUS = 10.3                 # board radius in hex widths -> ~380 hexes (6 pieces)
-CITY_R, BEACH_R = 6.6, 7.6
+CITY_R, BEACH_R = 8.5, 9.3
 W = H = 2048
 CX = CY = W / 2
 SQ3 = math.sqrt(3)
@@ -215,7 +215,15 @@ def t_stadium():
     a('<line x1="-20" y1="0" x2="20" y2="0" stroke="#fff" stroke-width="1.4"/>')
     a('<polygon points="' + hx(0, 0, 6, 30) + '" fill="none" stroke="#fff" stroke-width="1.4"/>')
 
-TYPES = [(t_honeycomb, 22), (t_tower, 13), (t_courtyard, 13), (t_stepped, 9), (t_houses, 12),
+def t_trio():
+    hexagon(0, 0, RC - 2, "#CFC8B8")
+    cols = random.sample(ROOFS + GLASS, 3)
+    for i, k in enumerate((1, 3, 5)):
+        x, y = vtx(0, 0, 21, k, 30)
+        pyramid(x, y, 19 - i*2, cols[i], h=9 - i*2)
+    hexagon(0, 0, 5, "#7FD0EE", 'stroke="#fff" stroke-width="1"')
+
+TYPES = [(t_trio, 8), (t_honeycomb, 22), (t_tower, 13), (t_courtyard, 13), (t_stepped, 9), (t_houses, 12),
          (t_park, 9), (t_plaza, 5), (t_market, 5), (t_gardens, 5), (t_dome, 4)]
 def pick():
     tot = sum(w for _, w in TYPES); x = random.uniform(0, tot)
@@ -306,7 +314,8 @@ for c in cells.values():
 # special landmark positions
 city_cells = [k for k, c in cells.items() if c["zone"] == "city" and c["ring"] >= 2]
 random.shuffle(city_cells)
-forced = {city_cells[0]: t_stadium, city_cells[1]: t_dome, city_cells[2]: t_market, city_cells[3]: t_plaza}
+forced = {city_cells[0]: t_stadium, city_cells[1]: t_dome, city_cells[2]: t_market, city_cells[3]: t_plaza,
+          city_cells[4]: t_market, city_cells[5]: t_plaza, city_cells[6]: t_dome}
 
 for (q, r), c in cells.items():
     x, y, z = c["x"], c["y"], c["zone"]
@@ -320,7 +329,7 @@ for (q, r), c in cells.items():
     elif z == "beach":
         t_beach(True)
     else:
-        depth = 0 if c["d"] < BEACH_R + 1 else 1 if c["d"] < BEACH_R + 2 else 2 if c["d"] < BEACH_R + 2.8 else 3
+        depth = 0 if c["d"] < BEACH_R + 0.5 else 2
         t_water(depth)
     a('</g>')
 
